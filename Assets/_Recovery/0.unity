@@ -922,7 +922,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   startPos: {fileID: 856828161}
   levelManagerData: {fileID: 11400000, guid: 0678e608f6524344fa30b953c78ce4a6, type: 2}
-  debugMode: 1
+  debugMod: 1
 --- !u!4 &1792593352
 Transform:
   m_ObjectHideFlags: 0
@@ -1478,5 +1478,5 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 478487092}
-  - {fileID: 856828162}
   - {fileID: 1792593352}
+  - {fileID: 856828162}
