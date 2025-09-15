@@ -1,21 +1,21 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(GameManager))]
-public class GameManagerEditor : Editor
+[CustomEditor(typeof(LevelManager))]
+public class LevelManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        GameManager gameManager = (GameManager)target;
+        LevelManager levelManager = (LevelManager)target;
         if (GUILayout.Button("Generate Parking Spots"))
         {
-            gameManager.GenerateParkingSpots();
+            levelManager.GenerateParkingSpots();
         }
 
         if (GUILayout.Button("Clear  Parking Spots"))
         {
-            gameManager.ClearParkngSpots();
+            levelManager.ClearParkngSpots();
         }
 
 

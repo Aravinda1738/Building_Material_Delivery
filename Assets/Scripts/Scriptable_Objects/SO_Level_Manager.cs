@@ -4,12 +4,27 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SO_Level_Manager", menuName = "Scriptable Objects/SO_Level_Manager")]
 public class SO_Level_Manager : ScriptableObject
 {
-    public int maxNumberOfParkingSpots;
+    [Header("Layout")]
+    public int rows = 3;
+    public int columns = 3;
+    public int totalSpawnPoints = 5;
 
-    public float spaceBetween = 5f;
 
+    [Header("Adjustments")]
+    public float spaceBetweenColumns = 5f;
+    public float spaceBetweenRows = 8f;
+
+    public float rowOffsetFromSP = -5.5f;
+    public float columnOffsetFromSP = -5.5f;
+
+    public float SpawnHeight = 1.195f;
+
+    [Header("Spawn Object")]
     public GameObject Vehical;
 
    
+   
+
+
 
 }

@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35b4a2e35d04e3e4d87f310e7528e6d3, type: 3}
   m_Name: SO_Level_Manager
   m_EditorClassIdentifier: Assembly-CSharp::SO_Level_Manager
-  maxNumberOfParkingSpots: 5
-  spaceBetween: 20
+  rows: 3
+  columns: 3
+  totalSpawnPoints: 5
+  spaceBetweenColumns: 2
+  spaceBetweenRows: 4.5
+  rowOffsetFromSP: -6
+  columnOffsetFromSP: 0.5
+  SpawnHeight: 1.195
   Vehical: {fileID: 1776182535699798825, guid: 3f18167d4b23b624b859bf598a07613b, type: 3}
