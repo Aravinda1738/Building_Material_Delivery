@@ -10,7 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a69bdb07ebc2f264c8b15257e88750d5, type: 3}
-  m_Name: SO_Cement
+  m_Name: SO_ItemType
   m_EditorClassIdentifier: Assembly-CSharp::SO_Item
-  itemMesh: {fileID: 7027636043351174211, guid: 7d23fd6f2db3476479675aa7aa1247e8, type: 3}
-  itemType: 0
+  itemTypes:
+  - {fileID: 97814398098418300, guid: bbf526b166755184084bd92e8385a149, type: 3}
+  - {fileID: 905029042755250307, guid: 417aa19c2209ad94da446320fe3accf3, type: 3}
+  - {fileID: 7752243806595038794, guid: 9ce90979c56c3a84fae9b13a4ae859b1, type: 3}
+  - {fileID: 1885007618083424654, guid: 9f2304919eadba144905bf2e66bba7fe, type: 3}

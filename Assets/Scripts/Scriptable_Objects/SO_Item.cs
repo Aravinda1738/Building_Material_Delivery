@@ -5,19 +5,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SO_Item", menuName = "Scriptable Objects/SO_Item")]
 public class SO_Item : ScriptableObject
 {
-  
 
-    public List<GameObject> itemTypes;
+    [SerializeField]
+    private List<GameObject> itemTypes;
 
-    public ItemType itemType;
+   
 
+    public GameObject GetItemType(int id)
+    {
+        return itemTypes[id];
 
-
-}
-public enum ItemType
-{
-    CEMENT,
-    STEEL_ROD,
-    BRICK,
-    SAND
+    }
 }

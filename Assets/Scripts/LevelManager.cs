@@ -16,10 +16,15 @@ public class LevelManager : MonoBehaviour
 
     private List<Container> containers = new List<Container>();
 
+    private int DifficultyLevel = 3; // (5,4)-easy,(2,3)-medium,0-hard
 
     //Debug Variables
     [SerializeField]
     private SO_DebugMode debugMode;
+    [SerializeField]
+    private bool spawnDebugobj;
+    [SerializeField]
+    private GameObject debugCube;
     private List<GameObject> debugObjs = new List<GameObject>();
 
 
@@ -100,7 +105,10 @@ public class LevelManager : MonoBehaviour
 
             Debug.Log("Total Parking Spots: " + cells.Count);
 
-
+            if (spawnDebugobj)
+            {
+               SpawnDebugObjs();
+            }
         }
     }
 
@@ -164,7 +172,7 @@ public class LevelManager : MonoBehaviour
         }
 
 
-        baseArr = CustomeShuffle(3, baseArr, containerData.totalItemsCanHold); // custome shuffle algorathem
+        baseArr = CustomeShuffle(DifficultyLevel, baseArr, containerData.totalItemsCanHold); // custome shuffle algorathem
 
 
         if (debugMode.isDebugMode)
@@ -356,8 +364,8 @@ public class LevelManager : MonoBehaviour
 
         foreach (Vector3 pos in cells)//loop
         {
-            GameObject gameObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), pos, levelManagerData.Vehical.transform.rotation);
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+            GameObject gameObject = Instantiate(debugCube, pos, levelManagerData.Vehical.transform.rotation);
+            
             debugObjs.Add(gameObject);
 
 
@@ -374,6 +382,8 @@ public class LevelManager : MonoBehaviour
             DestroyImmediate(obj);
         }
         debugObjs.Clear();
+
+       
 
     }
 

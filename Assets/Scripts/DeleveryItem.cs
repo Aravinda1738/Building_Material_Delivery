@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DeleveryItem : MonoBehaviour
@@ -5,22 +6,45 @@ public class DeleveryItem : MonoBehaviour
 
     [SerializeField]
     private SO_DebugMode debugMode;
+  
+    [SerializeField]
     private int id;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField]
+    private SO_Container containerData;
+    private MeshFilter meshFilter;
+    private MeshRenderer meshRenderer;
+    public DeleveryItem(int type)
     {
+        id = type;
 
+
+      
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-
+        if (debugMode.isDebugMode)
+            Debug.Log("Item Created with id: " + id);
     }
 
     public int GetId()
     { return id; }
 
     public void SetId(int newId)
-    { id = newId; }
+    {
+        
+        id = newId;
+       
+    }
+
+
+    private void OnValidate()
+    {
+        if (id > containerData.totalItemsCanHold)
+        {
+            id = -1;
+            Debug.LogWarning("ID must not be greater then containerData.totalItemsCanHold ");
+        }
+    }
+
 }
