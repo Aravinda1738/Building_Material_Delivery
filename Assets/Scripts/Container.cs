@@ -45,7 +45,7 @@ public class Container : MonoBehaviour
     }
 
 
-    public void InitialLoad(int[] ids)
+    public void InitialLoad(List<int> ids)
     {
         
     }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using static UnityEditor.Progress;
 
 public class LevelManager : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField]
     private SO_Level_Manager levelManagerData;
+    [SerializeField]
     private SO_Container containerData;
 
     private List<Container> containers = new List<Container>();
@@ -39,10 +42,10 @@ public class LevelManager : MonoBehaviour
         if (debugMode.isDebugMode)
             clearDebugObjs();
 
-        // GenerateParkingSpots();
-        // SpawnContainers();
+        GenerateParkingSpots();
+        SpawnContainers();
 
-        Shuffle();
+        DoShuffle();
     }
 
     // Update is called once per frame
@@ -96,8 +99,6 @@ public class LevelManager : MonoBehaviour
         {
 
             Debug.Log("Total Parking Spots: " + cells.Count);
-            SpawnDebugObjs();
-
 
 
         }
@@ -133,8 +134,15 @@ public class LevelManager : MonoBehaviour
 
 
 
-    private void Shuffle()
+    private void DoShuffle()
     {
+        if (cells.Count == 0)
+        {
+            Debug.LogError("Parking Spots are not generated.");
+            return;
+
+        }
+
         int totalItems = cells.Count * containerData.totalItemsCanHold;
 
         List<int> baseArr = new List<int>();
@@ -151,34 +159,190 @@ public class LevelManager : MonoBehaviour
 
         if (debugMode.isDebugMode)
         {
-            foreach (int id in baseArr)
-            {
-                Debug.Log("Item ID: " + id);
-            }
+          
+            PrintIntList("=== Before shuffle===", baseArr);
         }
 
 
-
-        baseArr.Sort((a, b) => Random.Range(-1, 2)); // temp shuffle algorathem 
-
+        baseArr = CustomeShuffle(3, baseArr, containerData.totalItemsCanHold); // custome shuffle algorathem
 
 
-        for (int i = 0; i < totalItems; i++) // 
+        if (debugMode.isDebugMode)
         {
-            int[] temp = { };
+            
+            PrintIntList("=== After shuffle===", baseArr);
+        }
 
-            for (int j = 0; j < containerData.totalItemsCanHold; j++)
+        if (containers.Count == 0)
+        {
+            Debug.LogError("containers Array is Empty.");
+            return;
+        }
+
+        int skip = 0;
+        for (int i = 1; i < cells.Count + 1; i++) // split and give to containers
+        {
+
+
+            List<int> temp = new List<int>();
+
+
+            for (int j = skip; j < containerData.totalItemsCanHold * i; j++)
             {
-                temp[j] = baseArr[i];
+
+                temp.Add(baseArr[j]);
+                skip++;
             }
+            // skip++;
+            containers[i - 1].InitialLoad(temp);
 
-            containers[i].InitialLoad(temp);
 
+
+
+
+
+            if (debugMode.isDebugMode)
+            {
+                PrintIntList("Per Vehical Load",temp);
+            }
         }
 
 
 
 
+    }
+
+
+    private List<int> CustomeShuffle(int numberOfMatchingNeighbors, List<int> arr, int totalTypes)
+    {
+        arr.Sort((a, b) => Random.Range(-1, 2)); //initial 
+
+        int[] typesToSwap = new int[2];
+        typesToSwap[0] = Random.Range(0, totalTypes);
+        typesToSwap[1] = Random.Range(0, totalTypes);
+
+        List<int> SwapCompletedIndexes = new List<int>();
+        int swapId = 0;
+
+        if (debugMode.isDebugMode)
+        {
+            // PrintIntList(arr);
+        }
+
+        for (int i = 0; i < numberOfMatchingNeighbors; i++)
+        {
+            int indexOfA = 0;
+            int indexOfB = 0;
+
+            for (int k = 0; k < arr.Count; k++)
+            {
+                // Debug.Log("k: " + k + "/" + arr.Count);
+
+                if (k != arr.Count - 1) //ignore last index
+                {
+
+                    if (arr[k] == typesToSwap[swapId] && arr[k] != arr[k + 1])   //ignore already swapped or grouped before swapped indexes
+                    {
+                        if (k != 0)
+                        {
+                            if (arr[k] != arr[k - 1])
+                            {
+                                indexOfA = arr.IndexOf(typesToSwap[0]);  //1
+
+
+
+
+                                foreach (int item in arr)                //2
+                                {
+                                    if (arr.IndexOf(item) != indexOfA && item == arr[indexOfA])
+                                    {
+                                        indexOfB = arr.IndexOf(item);
+
+                                    }
+                                }
+
+                                arr = Swap(arr, indexOfA, indexOfB);  //3
+                            }
+                        }
+                        else
+                        {
+                            indexOfA = arr.IndexOf(typesToSwap[0]);
+
+
+
+                            foreach (int item in arr)
+                            {
+                                if (arr.IndexOf(item) != indexOfA && item == arr[indexOfA])
+                                {
+                                    indexOfB = arr.IndexOf(item);
+
+                                }
+                            }
+
+                            arr = Swap(arr, indexOfA, indexOfB);
+                        }
+
+                        if (swapId >= 1)
+                        {
+                            swapId = 0;
+
+                        }
+                        else
+                        {
+
+                            swapId++;
+                        }
+
+
+                    }
+                }
+
+            }
+        }
+        return arr;
+    }
+
+
+
+
+    // TOOLS
+
+    private List<int> Swap(List<int> arr, int indexA, int indexB) //swap a+1 and b
+    {
+        int tempA;
+
+
+        tempA = arr[indexA + 1];
+
+        arr[indexA + 1] = arr[indexB];
+
+        arr[indexB] = tempA;
+
+
+        return arr;
+
+
+    }
+
+
+    private void PrintIntList(string aditionalMessage, List<int> arr)
+    {
+        string message = "ARRAY - ";
+        foreach (int item in arr)
+        {
+            message += item + ", ";
+        }
+        Debug.Log(aditionalMessage + " Item : " + message);
+    }
+
+    private void PrintIntArray(string aditionalMessage, int[] arr)
+    {
+        string message = "ARRAY - ";
+        foreach (int item in arr)
+        {
+            message += item + ", ";
+        }
+        Debug.Log(aditionalMessage + " Item : " + message);
     }
 
 
