@@ -58,6 +58,11 @@ public class Container : MonoBehaviour
         int i = 0;
         foreach (Vector3 item in loadingSpots)
         {
+            if (i>itemData.GetitemTypesCount())
+            {
+                Debug.LogError("id > item type");
+            }
+
             GameObject temp = Instantiate(itemData.GetItemType(ids[i]), item, itemData.GetItemType(ids[i]).transform.rotation);
             // GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
             temp.name = "DItem_" + i;

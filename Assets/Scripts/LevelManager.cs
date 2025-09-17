@@ -51,7 +51,7 @@ public class LevelManager : MonoBehaviour
             clearDebugObjs();
 
         GenerateParkingSpots();
-        //SpawnContainers();
+        SpawnContainers();
 
         DoShuffle();
     }
@@ -158,11 +158,43 @@ public class LevelManager : MonoBehaviour
 
         List<int> baseArr = new List<int>();
 
-        for (int i = 0; i < levelManagerData.totalSpawnPoints; i++) // generate itemId in array // unshuffed
+
+        int emptyContainers = 0;
+
+        switch (DifficultyLevel)
         {
+            case 1:
+                emptyContainers = 1;
+                break;
+            case 2:
+                emptyContainers = 1;
+                break;
+            case 3:
+                emptyContainers = 2;
+                break;
+            case 4:
+                emptyContainers = 2;
+                break;
+            case 5:
+                emptyContainers = 3;
+                break;
+            default:
+                emptyContainers = 2;
+                break;
+        }
+        int typesToSpawn = 0;
+        int availableSpots = levelManagerData.totalSpawnPoints - emptyContainers;
+        for (int i = 0; i < availableSpots; i++, typesToSpawn++) // generate itemId in array // unshuffed
+        {
+            if (typesToSpawn > itemData.GetitemTypesCount())
+            {
+                typesToSpawn = 0;
+            }
             for (int j = 0; j < containerData.totalItemsCanHold; j++)
             {
-                baseArr.Add(j);
+
+
+                baseArr.Add(typesToSpawn);
             }
 
 
@@ -174,22 +206,12 @@ public class LevelManager : MonoBehaviour
             PrintIntList("=== Before shuffle===", baseArr);
         }
 
+        List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(DifficultyLevel, baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
 
-        List<List<int>> setsOfItmsPerContainer = new List<List<int>>();
+        Debug.Log(" Items: " + setsOfItmsPerContainer.Count);
 
-        setsOfItmsPerContainer = CustomeShuffle2(DifficultyLevel, baseArr, containerData.totalItemsCanHold); // custome shuffle algorathem
 
-        int emptyContainers =0;
-        if (DifficultyLevel>2)
-        {
-            emptyContainers = 2;
-        }
-        else
-        {
-            emptyContainers = 1;
-        }
-
-        for (int i = 0; i < cells.Count-emptyContainers; i++)
+        for (int i = 0; i < cells.Count - emptyContainers; i++)
         {
             containers[i].InitialLoad(setsOfItmsPerContainer[i]);
         }
@@ -198,12 +220,12 @@ public class LevelManager : MonoBehaviour
     }
 
 
-  
 
 
-    private List<List<int>> CustomeShuffle2(int numberOfMatchingNeighbors, List<int> arr, int totalTypes)
+
+    private List<List<int>> CustomeShuffle2(int numberOfMatchingNeighbors, List<int> arr, int totalTypes, int splitAmount)
     {
-       
+
 
         List<List<int>> result = new List<List<int>>();
 
@@ -217,7 +239,7 @@ public class LevelManager : MonoBehaviour
             types = cells.Count - 1;
         }
 
-         result = SwapItemsFromArraysV4(FisherYatesShuffle(arr), numberOfMatchingNeighbors);
+        result = SwapItemsFromArraysV4(FisherYatesShuffle(arr), numberOfMatchingNeighbors, splitAmount);
 
 
         if (debugMode.isDebugMode)
@@ -227,7 +249,7 @@ public class LevelManager : MonoBehaviour
         }
         return result;
 
-       
+
     }
 
     // TOOLS
@@ -240,16 +262,16 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs) //swap V4
+    private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs, int splitAmount) //swap V4
     {
         List<int> temp = new List<int>();
-        int splitAmount = arr.Count;
+
 
         foreach (var item in arr)
         {
-            
-                temp.Add(item);
-            
+
+            temp.Add(item);
+
         }
 
         int pairs = 0;
@@ -264,7 +286,7 @@ public class LevelManager : MonoBehaviour
         {
             if (k + 2 < temp.Count)
             {
-                if (temp[k] == temp[k + 1]&& temp[k] != temp[k + 2])
+                if (temp[k] == temp[k + 1] && temp[k] != temp[k + 2])
                 {
                     k += 2;
                     pairs++;
@@ -272,7 +294,7 @@ public class LevelManager : MonoBehaviour
                 }
             }
 
-            
+
 
 
 
@@ -340,6 +362,7 @@ public class LevelManager : MonoBehaviour
 
             result.Add(temp.GetRange(i, count));
         }
+        Debug.Log("Final Items Sets: " + result.Count);
         return result;
     }
     private List<int> FisherYatesShuffle(List<int> list)
