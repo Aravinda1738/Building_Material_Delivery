@@ -322,9 +322,29 @@ public class LevelManager : MonoBehaviour
 
 
                         }
-                        int t = temp[k + 1];
-                        temp[k + 1] = temp[j];
-                        temp[j] = t;
+                        
+
+                        if (k + 3 < temp.Count)
+                        {
+                            if (temp[k] == temp[k + 1] && temp[k + 1] == temp[k + 2] && temp[k + 2] == temp[k + 3])
+                            {
+                                int o = temp[k + 1];
+                                int randomIndex = Random.Range(0, temp.Count);
+                                
+
+                                temp[k + 1] = temp[randomIndex];
+                                temp[randomIndex] = o;
+                            }
+                            else
+                            {
+                                int t = temp[k + 1];
+                                temp[k + 1] = temp[j];
+                                temp[j] = t;
+                            }
+                        }
+
+
+
 
                         pairs++;
                     }
