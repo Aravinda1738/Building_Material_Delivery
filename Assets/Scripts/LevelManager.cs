@@ -23,8 +23,8 @@ public class LevelManager : MonoBehaviour
     private SO_DebugMode debugMode;
     [SerializeField]
     private bool spawnDebugobj;
-    [SerializeField]
-    private GameObject debugCube;
+    
+   
     private List<GameObject> debugObjs = new List<GameObject>();
 
 
@@ -223,7 +223,9 @@ public class LevelManager : MonoBehaviour
 
     private List<int> CustomeShuffle(int numberOfMatchingNeighbors, List<int> arr, int totalTypes)
     {
-        arr.Sort((a, b) => Random.Range(-1, 2)); //initial 
+        //arr.Sort((a, b) => Random.Range(-1, 2)); //initial 
+
+       // FisherYatesShuffle(arr);
 
         int[] typesToSwap = new int[2];
         typesToSwap[0] = Random.Range(0, totalTypes);
@@ -234,7 +236,7 @@ public class LevelManager : MonoBehaviour
 
         if (debugMode.isDebugMode)
         {
-            // PrintIntList(arr);
+             PrintIntList("Shuffle = ",arr);
         }
 
         for (int i = 0; i < numberOfMatchingNeighbors; i++)
@@ -332,7 +334,23 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    private void FisherYatesShuffle(List<int> list)
+    {
+        System.Random rng = new System.Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            int value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+    }
 
+
+
+    //Debug Functions
     private void PrintIntList(string aditionalMessage, List<int> arr)
     {
         string message = "ARRAY - ";
@@ -352,9 +370,6 @@ public class LevelManager : MonoBehaviour
         }
         Debug.Log(aditionalMessage + " Item : " + message);
     }
-
-
-    //Debug Functions
     public void SpawnDebugObjs()
     {
         if (cells == null)
@@ -364,7 +379,7 @@ public class LevelManager : MonoBehaviour
 
         foreach (Vector3 pos in cells)//loop
         {
-            GameObject gameObject = Instantiate(debugCube, pos, levelManagerData.Vehical.transform.rotation);
+            GameObject gameObject = Instantiate(debugMode.debugCube, pos, levelManagerData.Vehical.transform.rotation);
             
             debugObjs.Add(gameObject);
 
@@ -386,6 +401,5 @@ public class LevelManager : MonoBehaviour
        
 
     }
-
 
 }

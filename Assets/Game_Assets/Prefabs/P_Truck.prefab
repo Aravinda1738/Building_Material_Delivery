@@ -107,9 +107,10 @@ MonoBehaviour:
   containerData: {fileID: 11400000, guid: 7e1015377bf2f9a4ba9aa21a40e318b5, type: 2}
   debugMode: {fileID: 11400000, guid: 5c3dd08f8c9adf44591b49f4b83b2567, type: 2}
   itemData: {fileID: 11400000, guid: 443d688e15d09ad478aee3196114bba2, type: 2}
-  gapBetweenItems: 0.7
+  gapBetweenItems: 0.65
   sp: {fileID: 8448859996531141691}
   isMovingOut: 0
+  spawnDebugobj: 0
 --- !u!65 &3719800972330232303
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -158,9 +159,9 @@ Transform:
   m_GameObject: {fileID: 8448859996531141691}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.38, y: 0, z: -0}
-  m_LocalScale: {x: 1.3365, y: 1, z: 2}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: -0.65, y: 0, z: 0}
+  m_LocalScale: {x: 0.19999999, y: 0.14964458, z: 0.29928917}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1804191911398851429}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

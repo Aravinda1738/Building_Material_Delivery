@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Item
   itemTypes:
   - {fileID: 97814398098418300, guid: bbf526b166755184084bd92e8385a149, type: 3}
-  - {fileID: 905029042755250307, guid: 417aa19c2209ad94da446320fe3accf3, type: 3}
+  - {fileID: 5288800680476252045, guid: fd88f8a8dda3db54393f3988081adf57, type: 3}
   - {fileID: 7752243806595038794, guid: 9ce90979c56c3a84fae9b13a4ae859b1, type: 3}
   - {fileID: 1885007618083424654, guid: 9f2304919eadba144905bf2e66bba7fe, type: 3}

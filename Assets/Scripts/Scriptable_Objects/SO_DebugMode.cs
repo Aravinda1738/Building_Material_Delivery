@@ -4,4 +4,6 @@ using UnityEngine;
 public class SO_DebugMode : ScriptableObject
 {
     public bool isDebugMode = true;   
+
+    public GameObject debugCube;
 }

@@ -27,7 +27,7 @@ public class Container : MonoBehaviour
     [Tooltip("you can add only 4 elements")]
     private List<GameObject> items = new List<GameObject>();
 
-
+    public bool spawnDebugobj = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -55,12 +55,16 @@ public class Container : MonoBehaviour
            Debug.Log("Initial Load");
 
         GenerateLoadingSpots();
-        foreach (int item in ids)
+        int i = 0;
+        foreach (Vector3 item in loadingSpots)
         {
-            GameObject temp = Instantiate(itemData.GetItemType(item), loadingSpots[item],transform.rotation);
+            GameObject temp = Instantiate(itemData.GetItemType(ids[i]), item, itemData.GetItemType(ids[i]).transform.rotation);
+            // GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
+            temp.name = "DItem_" + i;
+            // temp.transform.localScale = new Vector3(.5f, .5f, .5f);
             temp.transform.SetParent(sp.transform);
-            
-            items.Add(temp);
+            i++;
+
         }
     }
     public void Load()
@@ -89,15 +93,19 @@ public class Container : MonoBehaviour
 
         for (int i = 0; i < containerData.totalItemsCanHold; i++)
         {
-            loadingSpots.Add(new Vector3(sp.transform.position.x,transform.position.y , transform.position.z + ((i+1) * gapBetweenItems)));
+            loadingSpots.Add(new Vector3(sp.transform.position.x,sp.transform.position.y ,sp.transform.position.z + ((i+1) * gapBetweenItems)));
         }
      
-        if (debugMode.isDebugMode)
+        if (debugMode.isDebugMode&spawnDebugobj)
         {
             int i = 0;
             foreach (Vector3 item in loadingSpots)
             {
-                Instantiate(itemData.GetItemType(i), item, sp.transform.rotation, sp.transform).name = "item = "+i;
+                //GameObject temp = Instantiate(itemData.GetItemType(i), item, itemData.GetItemType(i).transform.rotation);
+                GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
+                temp.name = "DebugItem_" + i;
+               // temp.transform.localScale = new Vector3(.5f, .5f, .5f);
+                temp.transform.SetParent(sp.transform);
                 i++;
                 
             }
