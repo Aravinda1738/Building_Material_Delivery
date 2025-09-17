@@ -16,4 +16,9 @@ public class SO_Item : ScriptableObject
         return itemTypes[id];
 
     }
+
+    public int GetitemTypesCount()
+    {
+        return itemTypes.Count;
+    }
 }

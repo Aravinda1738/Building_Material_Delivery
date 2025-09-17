@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using static Unity.VisualScripting.Member;
 using static UnityEditor.Progress;
 
 public class LevelManager : MonoBehaviour
@@ -15,16 +16,18 @@ public class LevelManager : MonoBehaviour
     private SO_Container containerData;
 
     private List<Container> containers = new List<Container>();
-
-    private int DifficultyLevel = 3; // (5,4)-easy,(2,3)-medium,0-hard
+    [SerializeField]
+    private SO_Item itemData;
+    [SerializeField]
+    private int DifficultyLevel = 3;// (5,4)-easy,(2,3)-medium,0-hard
 
     //Debug Variables
     [SerializeField]
     private SO_DebugMode debugMode;
     [SerializeField]
     private bool spawnDebugobj;
-    
-   
+
+
     private List<GameObject> debugObjs = new List<GameObject>();
 
 
@@ -48,7 +51,7 @@ public class LevelManager : MonoBehaviour
             clearDebugObjs();
 
         GenerateParkingSpots();
-        SpawnContainers();
+        //SpawnContainers();
 
         DoShuffle();
     }
@@ -107,7 +110,7 @@ public class LevelManager : MonoBehaviour
 
             if (spawnDebugobj)
             {
-               SpawnDebugObjs();
+                SpawnDebugObjs();
             }
         }
     }
@@ -167,174 +170,179 @@ public class LevelManager : MonoBehaviour
 
         if (debugMode.isDebugMode)
         {
-          
+
             PrintIntList("=== Before shuffle===", baseArr);
         }
 
 
-        baseArr = CustomeShuffle(DifficultyLevel, baseArr, containerData.totalItemsCanHold); // custome shuffle algorathem
+        List<List<int>> setsOfItmsPerContainer = new List<List<int>>();
 
+        setsOfItmsPerContainer = CustomeShuffle2(DifficultyLevel, baseArr, containerData.totalItemsCanHold); // custome shuffle algorathem
 
-        if (debugMode.isDebugMode)
+        int emptyContainers =0;
+        if (DifficultyLevel>2)
         {
-            
-            PrintIntList("=== After shuffle===", baseArr);
+            emptyContainers = 2;
+        }
+        else
+        {
+            emptyContainers = 1;
         }
 
-        if (containers.Count == 0)
+        for (int i = 0; i < cells.Count-emptyContainers; i++)
         {
-            Debug.LogError("containers Array is Empty.");
-            return;
+            containers[i].InitialLoad(setsOfItmsPerContainer[i]);
         }
-
-        int skip = 0;
-        for (int i = 1; i < cells.Count + 1; i++) // split and give to containers
-        {
-
-
-            List<int> temp = new List<int>();
-
-
-            for (int j = skip; j < containerData.totalItemsCanHold * i; j++)
-            {
-
-                temp.Add(baseArr[j]);
-                skip++;
-            }
-            // skip++;
-            containers[i - 1].InitialLoad(temp);
-
-
-
-
-
-
-            if (debugMode.isDebugMode)
-            {
-                PrintIntList("Per Vehical Load",temp);
-            }
-        }
-
-
 
 
     }
 
 
-    private List<int> CustomeShuffle(int numberOfMatchingNeighbors, List<int> arr, int totalTypes)
+  
+
+
+    private List<List<int>> CustomeShuffle2(int numberOfMatchingNeighbors, List<int> arr, int totalTypes)
     {
-        //arr.Sort((a, b) => Random.Range(-1, 2)); //initial 
+       
 
-       // FisherYatesShuffle(arr);
+        List<List<int>> result = new List<List<int>>();
 
-        int[] typesToSwap = new int[2];
-        typesToSwap[0] = Random.Range(0, totalTypes);
-        typesToSwap[1] = Random.Range(0, totalTypes);
+        int types = cells.Count - 1;
+        if (itemData.GetitemTypesCount() < cells.Count - 1)
+        {
+            types = itemData.GetitemTypesCount();
+        }
+        else
+        {
+            types = cells.Count - 1;
+        }
 
-        List<int> SwapCompletedIndexes = new List<int>();
-        int swapId = 0;
+         result = SwapItemsFromArraysV4(FisherYatesShuffle(arr), numberOfMatchingNeighbors);
+
 
         if (debugMode.isDebugMode)
         {
-             PrintIntList("Shuffle = ",arr);
+            PrintListOfLists("===  shuffle v4 ===", result);
+
         }
+        return result;
 
-        for (int i = 0; i < numberOfMatchingNeighbors; i++)
-        {
-            int indexOfA = 0;
-            int indexOfB = 0;
-
-            for (int k = 0; k < arr.Count; k++)
-            {
-                // Debug.Log("k: " + k + "/" + arr.Count);
-
-                if (k != arr.Count - 1) //ignore last index
-                {
-
-                    if (arr[k] == typesToSwap[swapId] && arr[k] != arr[k + 1])   //ignore already swapped or grouped before swapped indexes
-                    {
-                        if (k != 0)
-                        {
-                            if (arr[k] != arr[k - 1])
-                            {
-                                indexOfA = arr.IndexOf(typesToSwap[0]);  //1
-
-
-
-
-                                foreach (int item in arr)                //2
-                                {
-                                    if (arr.IndexOf(item) != indexOfA && item == arr[indexOfA])
-                                    {
-                                        indexOfB = arr.IndexOf(item);
-
-                                    }
-                                }
-
-                                arr = Swap(arr, indexOfA, indexOfB);  //3
-                            }
-                        }
-                        else
-                        {
-                            indexOfA = arr.IndexOf(typesToSwap[0]);
-
-
-
-                            foreach (int item in arr)
-                            {
-                                if (arr.IndexOf(item) != indexOfA && item == arr[indexOfA])
-                                {
-                                    indexOfB = arr.IndexOf(item);
-
-                                }
-                            }
-
-                            arr = Swap(arr, indexOfA, indexOfB);
-                        }
-
-                        if (swapId >= 1)
-                        {
-                            swapId = 0;
-
-                        }
-                        else
-                        {
-
-                            swapId++;
-                        }
-
-
-                    }
-                }
-
-            }
-        }
-        return arr;
+       
     }
-
-
-
 
     // TOOLS
-
-    private List<int> Swap(List<int> arr, int indexA, int indexB) //swap a+1 and b
+    class ItemsSet
     {
-        int tempA;
+        public List<int> items;
+        public bool isComplete = false;
 
-
-        tempA = arr[indexA + 1];
-
-        arr[indexA + 1] = arr[indexB];
-
-        arr[indexB] = tempA;
-
-
-        return arr;
-
+        public int matchingPairsCount;
 
     }
 
-    private void FisherYatesShuffle(List<int> list)
+    private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs) //swap V4
+    {
+        List<int> temp = new List<int>();
+        int splitAmount = arr.Count;
+
+        foreach (var item in arr)
+        {
+            
+                temp.Add(item);
+            
+        }
+
+        int pairs = 0;
+
+
+
+
+
+        PrintIntList("1 temp", temp);
+
+        for (int k = 0; k < temp.Count; k++)// sort pairs in temp
+        {
+            if (k + 2 < temp.Count)
+            {
+                if (temp[k] == temp[k + 1]&& temp[k] != temp[k + 2])
+                {
+                    k += 2;
+                    pairs++;
+                    continue;
+                }
+            }
+
+            
+
+
+
+            for (int j = 0; j < temp.Count; j++)
+            {
+
+
+                if (k + 1 < temp.Count)
+                {
+
+                    if (temp[k] == temp[j] && j != k)
+                    {
+
+
+
+                        if (pairs == requiredNoOfPairs)
+                        {
+                            arr.Clear();
+
+
+                            Debug.LogWarning("temp count = " + temp.Count + " Pairs = " + pairs);
+
+                            return splitPairs(temp, splitAmount);
+
+
+
+                        }
+                        int t = temp[k + 1];
+                        temp[k + 1] = temp[j];
+                        temp[j] = t;
+
+                        pairs++;
+                    }
+
+                }
+
+
+            }
+
+
+        }
+
+        arr.Clear();
+
+
+
+
+        Debug.LogWarning("temp count = " + temp.Count + " Pairs = " + pairs);
+
+
+
+        return splitPairs(temp, splitAmount);
+    }
+
+
+    private List<List<int>> splitPairs(List<int> temp, int splitAmount)
+    {
+
+        var result = new List<List<int>>();
+        //split again and return
+        for (int i = 0; i < temp.Count; i += splitAmount)
+        {
+            int count = Mathf.Min(splitAmount, temp.Count - i);
+
+
+            result.Add(temp.GetRange(i, count));
+        }
+        return result;
+    }
+    private List<int> FisherYatesShuffle(List<int> list)
     {
         System.Random rng = new System.Random();
         int n = list.Count;
@@ -346,9 +354,20 @@ public class LevelManager : MonoBehaviour
             list[k] = list[n];
             list[n] = value;
         }
+
+        return list;
     }
 
-
+    private List<List<int>> SplitList(List<int> source, int splitAmount)
+    {
+        var result = new List<List<int>>();
+        for (int i = 0; i < source.Count; i += splitAmount)
+        {
+            int count = Mathf.Min(splitAmount, source.Count - i);
+            result.Add(source.GetRange(i, count));
+        }
+        return result;
+    }
 
     //Debug Functions
     private void PrintIntList(string aditionalMessage, List<int> arr)
@@ -357,6 +376,36 @@ public class LevelManager : MonoBehaviour
         foreach (int item in arr)
         {
             message += item + ", ";
+        }
+        Debug.Log(aditionalMessage + " Item : " + message);
+    }
+
+    private void PrintListOfLists(string additionalMessage, List<List<int>> arr)
+    {
+        string message = additionalMessage + " [";
+        for (int i = 0; i < arr.Count; i++)
+        {
+
+            for (int j = 0; j < arr[i].Count; j++)
+            {
+                message += arr[i][j] + " , ";
+            }
+            message += "] [";
+        }
+        Debug.Log(message);
+    }
+
+    private void PrintItemSet(string aditionalMessage, List<ItemsSet> arr)
+    {
+        string message = "SET - [";
+        foreach (var item in arr)
+        {
+            foreach (var item1 in item.items)
+            {
+                message += item1 + ", ";
+
+            }
+            message += "] Pairs = " + item.matchingPairsCount + " | ";
         }
         Debug.Log(aditionalMessage + " Item : " + message);
     }
@@ -380,7 +429,7 @@ public class LevelManager : MonoBehaviour
         foreach (Vector3 pos in cells)//loop
         {
             GameObject gameObject = Instantiate(debugMode.debugCube, pos, levelManagerData.Vehical.transform.rotation);
-            
+
             debugObjs.Add(gameObject);
 
 
@@ -398,7 +447,7 @@ public class LevelManager : MonoBehaviour
         }
         debugObjs.Clear();
 
-       
+
 
     }
 

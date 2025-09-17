@@ -1044,6 +1044,8 @@ MonoBehaviour:
   startPos: {fileID: 856828161}
   levelManagerData: {fileID: 11400000, guid: 0678e608f6524344fa30b953c78ce4a6, type: 2}
   containerData: {fileID: 11400000, guid: 7e1015377bf2f9a4ba9aa21a40e318b5, type: 2}
+  itemData: {fileID: 11400000, guid: 443d688e15d09ad478aee3196114bba2, type: 2}
+  DifficultyLevel: 3
   debugMode: {fileID: 11400000, guid: 5c3dd08f8c9adf44591b49f4b83b2567, type: 2}
   spawnDebugobj: 0
 --- !u!4 &1792593352
