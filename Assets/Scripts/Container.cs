@@ -52,7 +52,7 @@ public class Container : MonoBehaviour
     public void InitialLoad(List<int> ids)
     {
         if (debugMode.isDebugMode)
-           Debug.Log("Initial Load");
+         DebuggingTools.PrintMessage(" Initial Load ", this);   
 
         GenerateLoadingSpots();
         int i = 0;
@@ -60,12 +60,12 @@ public class Container : MonoBehaviour
         {
             if (i>itemData.GetitemTypesCount())
             {
-                Debug.LogError("id > item type");
+                DebuggingTools.PrintMessage(" id > item type ", DebuggingTools.DebugMessageType.ERROR, this);
             }
 
             GameObject temp = Instantiate(itemData.GetItemType(ids[i]), item, itemData.GetItemType(ids[i]).transform.rotation);
             // GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
-            temp.name = "DItem_" + i;
+            temp.name = string.Join("Item_", i);
             // temp.transform.localScale = new Vector3(.5f, .5f, .5f);
             temp.transform.SetParent(sp.transform);
             i++;
@@ -103,17 +103,8 @@ public class Container : MonoBehaviour
      
         if (debugMode.isDebugMode&spawnDebugobj)
         {
-            int i = 0;
-            foreach (Vector3 item in loadingSpots)
-            {
-                //GameObject temp = Instantiate(itemData.GetItemType(i), item, itemData.GetItemType(i).transform.rotation);
-                GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
-                temp.name = "DebugItem_" + i;
-               // temp.transform.localScale = new Vector3(.5f, .5f, .5f);
-                temp.transform.SetParent(sp.transform);
-                i++;
-                
-            }
+            DebuggingTools.SpawnDebugObjs(debugMode.debugCube, loadingSpots, sp.transform.rotation,sp.transform);
+           
         }
 
     }

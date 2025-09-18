@@ -6,51 +6,45 @@ using static UnityEditor.Progress;
 
 public class LevelManager : MonoBehaviour
 {
+
     [SerializeField]
     private GameObject startPos;
-    private List<Vector3> cells = new List<Vector3>();
-
     [SerializeField]
     private SO_Level_Manager levelManagerData;
     [SerializeField]
     private SO_Container containerData;
-
-    private List<Container> containers = new List<Container>();
     [SerializeField]
     private SO_Item itemData;
     [SerializeField]
     private int DifficultyLevel = 3;// (5,4)-easy,(2,3)-medium,0-hard
 
+
+    private List<Vector3> cells = new List<Vector3>();
+    private List<Container> containers = new List<Container>();
+
     //Debug Variables
     [SerializeField]
     private SO_DebugMode debugMode;
     [SerializeField]
-    private bool spawnDebugobj;
+    private bool canSpawnDebugobj;
 
 
     private List<GameObject> debugObjs = new List<GameObject>();
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
-    void Awake()
+    private void Awake()
     {
-        //if (levelManagerData == null)
-        //{
-        //    Debug.LogError("Level Manager Data is not assigned in the inspector.");
-        //    return;
-        //}
-        // GenerateParkingSpots();
+        if (debugMode.isDebugMode)
+            DebuggingTools.clearDebugObjs(debugObjs);
 
     }
 
 
     void Start()
     {
-        if (debugMode.isDebugMode)
-            clearDebugObjs();
 
         GenerateParkingSpots();
+
         SpawnContainers();
 
         DoShuffle();
@@ -106,11 +100,12 @@ public class LevelManager : MonoBehaviour
         if (debugMode.isDebugMode)
         {
 
-            Debug.Log("Total Parking Spots: " + cells.Count);
 
-            if (spawnDebugobj)
+            DebuggingTools.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
+
+            if (canSpawnDebugobj)
             {
-                SpawnDebugObjs();
+                DebuggingTools.SpawnDebugObjs(debugMode.debugCube, cells, transform.rotation);
             }
         }
     }
@@ -119,7 +114,7 @@ public class LevelManager : MonoBehaviour
     {
         if (debugMode.isDebugMode)
         {
-            clearDebugObjs();
+            DebuggingTools.clearDebugObjs(debugObjs);
         }
         cells.Clear();
     }
@@ -137,7 +132,9 @@ public class LevelManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError("does not have a Container component attached.");
+                DebuggingTools.PrintMessage("does not have a Container component attached.", DebuggingTools.DebugMessageType.ERROR, this);
+
+
             }
         }
     }
@@ -149,7 +146,8 @@ public class LevelManager : MonoBehaviour
     {
         if (cells.Count == 0)
         {
-            Debug.LogError("Parking Spots are not generated.");
+
+            DebuggingTools.PrintMessage("Parking Spots are not generated/Empty.", DebuggingTools.DebugMessageType.ERROR, this);
             return;
 
         }
@@ -203,12 +201,16 @@ public class LevelManager : MonoBehaviour
         if (debugMode.isDebugMode)
         {
 
-            PrintIntList("=== Before shuffle===", baseArr);
+            DebuggingTools.PrintList("=== Before shuffle===", baseArr);
         }
 
         List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(DifficultyLevel, baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
 
-        Debug.Log(" Items: " + setsOfItmsPerContainer.Count);
+        if (debugMode.isDebugMode)
+        {
+
+            DebuggingTools.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
+        }
 
 
         for (int i = 0; i < cells.Count - emptyContainers; i++)
@@ -244,7 +246,7 @@ public class LevelManager : MonoBehaviour
 
         if (debugMode.isDebugMode)
         {
-            PrintListOfLists("===  shuffle v4 ===", result);
+            DebuggingTools.PrintListOfLists("===  shuffle v4 ===", result);
 
         }
         return result;
@@ -252,15 +254,8 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    // TOOLS
-    class ItemsSet
-    {
-        public List<int> items;
-        public bool isComplete = false;
 
-        public int matchingPairsCount;
 
-    }
 
     private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs, int splitAmount) //swap V4
     {
@@ -280,7 +275,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-        PrintIntList("1 temp", temp);
+        DebuggingTools.PrintList("temp", temp);
 
         for (int k = 0; k < temp.Count; k++)// sort pairs in temp
         {
@@ -312,25 +307,25 @@ public class LevelManager : MonoBehaviour
 
                         if (pairs == requiredNoOfPairs)
                         {
-                            arr.Clear();
 
 
-                            Debug.LogWarning("temp count = " + temp.Count + " Pairs = " + pairs);
+                            if (debugMode.isDebugMode)
+                                DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
 
                             return splitPairs(temp, splitAmount);
 
 
 
                         }
-                        
 
-                        if (k + 3 < temp.Count)
+
+                        if (k + 3 < temp.Count && k - 1 >= 0)
                         {
-                            if (temp[k] == temp[k + 1] && temp[k + 1] == temp[k + 2] && temp[k + 2] == temp[k + 3])
+                            if (temp[k] == temp[k + 1] && temp[k] == temp[k + 2] && temp[k] == temp[k + 3])
                             {
                                 int o = temp[k + 1];
-                                int randomIndex = Random.Range(0, temp.Count);
-                                
+                                int randomIndex = k - 1;
+
 
                                 temp[k + 1] = temp[randomIndex];
                                 temp[randomIndex] = o;
@@ -361,8 +356,8 @@ public class LevelManager : MonoBehaviour
 
 
 
-
-        Debug.LogWarning("temp count = " + temp.Count + " Pairs = " + pairs);
+        if (debugMode.isDebugMode)
+            DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
 
 
 
@@ -382,7 +377,8 @@ public class LevelManager : MonoBehaviour
 
             result.Add(temp.GetRange(i, count));
         }
-        Debug.Log("Final Items Sets: " + result.Count);
+        if (debugMode.isDebugMode)
+            DebuggingTools.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
         return result;
     }
     private List<int> FisherYatesShuffle(List<int> list)
@@ -412,86 +408,14 @@ public class LevelManager : MonoBehaviour
         return result;
     }
 
-    //Debug Functions
-    private void PrintIntList(string aditionalMessage, List<int> arr)
-    {
-        string message = "ARRAY - ";
-        foreach (int item in arr)
-        {
-            message += item + ", ";
-        }
-        Debug.Log(aditionalMessage + " Item : " + message);
-    }
-
-    private void PrintListOfLists(string additionalMessage, List<List<int>> arr)
-    {
-        string message = additionalMessage + " [";
-        for (int i = 0; i < arr.Count; i++)
-        {
-
-            for (int j = 0; j < arr[i].Count; j++)
-            {
-                message += arr[i][j] + " , ";
-            }
-            message += "] [";
-        }
-        Debug.Log(message);
-    }
-
-    private void PrintItemSet(string aditionalMessage, List<ItemsSet> arr)
-    {
-        string message = "SET - [";
-        foreach (var item in arr)
-        {
-            foreach (var item1 in item.items)
-            {
-                message += item1 + ", ";
-
-            }
-            message += "] Pairs = " + item.matchingPairsCount + " | ";
-        }
-        Debug.Log(aditionalMessage + " Item : " + message);
-    }
-
-    private void PrintIntArray(string aditionalMessage, int[] arr)
-    {
-        string message = "ARRAY - ";
-        foreach (int item in arr)
-        {
-            message += item + ", ";
-        }
-        Debug.Log(aditionalMessage + " Item : " + message);
-    }
-    public void SpawnDebugObjs()
-    {
-        if (cells == null)
-        {
-            return;
-        }
-
-        foreach (Vector3 pos in cells)//loop
-        {
-            GameObject gameObject = Instantiate(debugMode.debugCube, pos, levelManagerData.Vehical.transform.rotation);
-
-            debugObjs.Add(gameObject);
 
 
 
 
 
-        }
-
-    }
-    public void clearDebugObjs()
-    {
-        foreach (GameObject obj in debugObjs)
-        {
-            DestroyImmediate(obj);
-        }
-        debugObjs.Clear();
 
 
 
-    }
+
 
 }

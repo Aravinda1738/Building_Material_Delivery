@@ -15,16 +15,14 @@ public class DeleveryItem : MonoBehaviour
     private MeshRenderer meshRenderer;
     public DeleveryItem(int type)
     {
-        id = type;
-
-
-      
+       this.id = type;
     }
 
     private void Start()
     {
         if (debugMode.isDebugMode)
-            Debug.Log("Item Created with id: " + id);
+
+            DebuggingTools.PrintMessage($" Item Created with id:  {id}", this);
     }
 
     public int GetId()
@@ -43,7 +41,7 @@ public class DeleveryItem : MonoBehaviour
         if (id > containerData.totalItemsCanHold)
         {
             id = -1;
-            Debug.LogWarning("ID must not be greater then containerData.totalItemsCanHold ");
+            DebuggingTools.PrintMessage("ID must not be greater then containerData.totalItemsCanHold ",DebuggingTools.DebugMessageType.WARNING ,this);
         }
     }
 

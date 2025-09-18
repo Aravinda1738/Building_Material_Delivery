@@ -22,17 +22,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     private void OnTap(Vector2 touchPosition)
     {
@@ -40,15 +30,11 @@ public class InputManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-
-
-
-
             if (debugMode.isDebugMode)
             {
 
-                Debug.Log(touchPosition + "Touched object: " + hit.transform.name);
-                Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 2f);
+               DebuggingTools.PrintMessage($" Touched object: {hit.transform.name}", this);
+ 
             }
         }
     }
