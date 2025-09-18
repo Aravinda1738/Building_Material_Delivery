@@ -13,6 +13,8 @@ public class SO_InputReader : ScriptableObject
     private InputAction touchActionPos;
 
     public event UnityAction<Vector2> tapEvent;
+    public event UnityAction<Vector2> pick;
+    public event UnityAction<Vector2> drop;
 
     private void OnEnable()
     {

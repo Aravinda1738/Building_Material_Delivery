@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -30,11 +31,19 @@ public class InputManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
+            Container container = hit.collider.GameObject().GetComponent<Container>();
+
+            if (container != null)
+            {
+                container.PickAction();
+            }
+
+
             if (debugMode.isDebugMode)
             {
 
-               DebuggingTools.PrintMessage($" Touched object: {hit.transform.name}", this);
- 
+                DebuggingTools.PrintMessage($" Touched object: {hit.transform.name}", this);
+
             }
         }
     }

@@ -72,6 +72,14 @@ public class Container : MonoBehaviour
 
         }
     }
+
+
+    public void PickAction()
+    {
+
+    }
+
+
     public void Load()
     {
 
