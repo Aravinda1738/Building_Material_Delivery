@@ -22,6 +22,8 @@ public class LevelManager : MonoBehaviour
     private List<Vector3> cells = new List<Vector3>();
     private List<Container> containers = new List<Container>();
 
+   
+
     //Debug Variables
     [SerializeField]
     private SO_DebugMode debugMode;
@@ -30,6 +32,7 @@ public class LevelManager : MonoBehaviour
 
 
     private List<GameObject> debugObjs = new List<GameObject>();
+
 
 
     private void Awake()
@@ -407,9 +410,6 @@ public class LevelManager : MonoBehaviour
         }
         return result;
     }
-
-
-
 
 
 

@@ -13,8 +13,7 @@ public class SO_InputReader : ScriptableObject
     private InputAction touchActionPos;
 
     public event UnityAction<Vector2> tapEvent;
-    public event UnityAction<Vector2> pick;
-    public event UnityAction<Vector2> drop;
+    
 
     private void OnEnable()
     {
@@ -23,8 +22,8 @@ public class SO_InputReader : ScriptableObject
         touchActionPos = inputAsset.FindAction("TapPos");
 
         touchAction.performed += OnTouchPerformed;
-        touchActionPos.Enable();
         touchAction.Enable();
+        touchActionPos.Enable();
 
     }
 
@@ -41,7 +40,7 @@ public class SO_InputReader : ScriptableObject
     private void OnTouchPerformed(InputAction.CallbackContext context)
     {
         tapEvent?.Invoke(touchActionPos.ReadValue<Vector2>());
-
+        touchActionPos.Reset();
     }
 
 }

@@ -31,10 +31,10 @@ public class InputManager : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            Container container = hit.collider.GameObject().GetComponent<Container>();
-
+            Container container = hit.collider.GetComponent<Container>();
             if (container != null)
             {
+                
                 container.PickAction();
             }
 
@@ -43,7 +43,7 @@ public class InputManager : MonoBehaviour
             {
 
                 DebuggingTools.PrintMessage($" Touched object: {hit.transform.name}", this);
-
+                Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 2f);
             }
         }
     }

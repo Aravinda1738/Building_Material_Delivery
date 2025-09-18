@@ -17,7 +17,7 @@
                 },
                 {
                     "name": "TapPos",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "73a9095a-6130-4192-ae89-0a979d6921ee",
                     "expectedControlType": "Vector2",
                     "processors": "",
@@ -29,19 +29,8 @@
                 {
                     "name": "",
                     "id": "5b0483ea-97ed-4d02-8ee3-0c48fb617b76",
-                    "path": "<Touchscreen>/Press",
-                    "interactions": "Tap,Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Tap",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3bf69816-01b5-46d0-a282-c6d19ad40732",
-                    "path": "<Mouse>/press",
-                    "interactions": "Press",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "Tap(duration=0.35)",
                     "processors": "",
                     "groups": "",
                     "action": "Tap",
@@ -51,19 +40,8 @@
                 {
                     "name": "",
                     "id": "e5c5dd2e-49ab-4c26-ab81-ddea6bc3dd72",
-                    "path": "<Touchscreen>/position",
-                    "interactions": "Tap,Press",
-                    "processors": "",
-                    "groups": "",
-                    "action": "TapPos",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6ce065fd-7c80-4c9d-ac74-f28ec98d5400",
-                    "path": "<Mouse>/position",
-                    "interactions": "Press,Tap",
+                    "path": "<Touchscreen>/primaryTouch/startPosition",
+                    "interactions": "Tap(duration=0.35)",
                     "processors": "",
                     "groups": "",
                     "action": "TapPos",
