@@ -54,9 +54,11 @@ public  class TransactionManager : MonoBehaviour //Event invoker
 
     public void StoreSendingItems(List<GameObject> sendingItems)
     {
+
         itemsToTransfer.Clear();
         itemsToTransfer = sendingItems;
 
+        Debug.LogError("1-1-1-1-1-1-1-1-------"+ itemsToTransfer.Count);
 
 
     }
