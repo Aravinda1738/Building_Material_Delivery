@@ -249,11 +249,14 @@ public class Container : MonoBehaviour
 
             Debug.LogWarning(loadingSpots.Count+"777777777777777777"+pickedGroup.Count);
        
-        for (int i = loadingSpots.Count-1;i>0 ; i--)
+        for (int i = noOfOccupiedSpots - 1; i >= 0; i--)
         {
 
 
-
+            if (loadingSpots[i].occupent == null)
+            {
+                break; // Stop if we find an empty spot in the stack
+            }
             if (TopItemMatchCheck(loadingSpots[i].occupent.GetComponent<DeleveryItem>(), pickedGroup[0].GetComponent<DeleveryItem>()))
             {
                 loadingSpots[i].occupent.GetComponent<DeleveryItem>().AddGlow();
@@ -347,7 +350,7 @@ public class LoadingSpots
 {
     public Vector3 spot = new Vector3(0, 0, 0);
     public bool isOccupied = false;
-    public GameObject occupent;
+    public GameObject occupent ;
 
     public LoadingSpots(Vector3 spot, bool isOccupied)
     {
