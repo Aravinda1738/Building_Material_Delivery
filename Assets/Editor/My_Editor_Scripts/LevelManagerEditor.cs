@@ -18,6 +18,11 @@ public class LevelManagerEditor : Editor
             levelManager.ClearParkngSpots();
         }
 
+        if (GUILayout.Button("Restart Level"))
+        {
+            levelManager.RestartLevel();
+        }
+
 
 
         

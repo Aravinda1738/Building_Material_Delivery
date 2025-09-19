@@ -59,6 +59,14 @@ public class LevelManager : MonoBehaviour
 
     }
 
+    public void RestartLevel()
+    {
+        GenerateParkingSpots();
+
+        SpawnContainers();
+
+        DoShuffle();
+    }
 
 
     private void CheckPickableItems()
@@ -119,19 +127,24 @@ public class LevelManager : MonoBehaviour
         {
             DebuggingTools.clearDebugObjs(debugObjs);
         }
+       
         cells.Clear();
     }
 
 
     private void SpawnContainers()
     {
+        ClearContainers();
+        int i=0;
         foreach (Vector3 pos in cells)
         {
             GameObject containerObj = Instantiate(levelManagerData.Vehical, pos, levelManagerData.Vehical.transform.rotation);
             Container container = containerObj.GetComponent<Container>();
             if (container != null)
             {
+                container.SetId(i);
                 containers.Add(container);
+                i++;
             }
             else
             {
@@ -142,7 +155,19 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public void ClearContainers()
+    {
+        if (debugMode.isDebugMode)
+        {
+            DebuggingTools.clearDebugObjs(debugObjs);
+        }
+        foreach (var item in containers)
+        {
+            Destroy(item);
 
+        }
+        containers.Clear();
+    }
 
 
     private void DoShuffle()
@@ -216,9 +241,18 @@ public class LevelManager : MonoBehaviour
         }
 
 
-        for (int i = 0; i < cells.Count - emptyContainers; i++)
+        for (int i = 0; i < cells.Count; i++)
         {
-            containers[i].InitialLoad(setsOfItmsPerContainer[i]);
+            if (i>= cells.Count - emptyContainers)
+            {
+                containers[i].GenerateLoadingSpots();
+            }
+            else
+            {
+              containers[i].InitialLoad(setsOfItmsPerContainer[i]);
+
+            }
+
         }
 
 

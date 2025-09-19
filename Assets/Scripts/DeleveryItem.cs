@@ -42,13 +42,13 @@ public class DeleveryItem : MonoBehaviour
     public void GoBackToPreviousPoint()
     {
         this.gameObject.transform.SetParent(history.Peek().preContainer.transform);
-       // this.gameObject.transform.position=
+        // this.gameObject.transform.position=
     }
 
 
-    public void RegisterMove(GameObject owner, Vector3 currentLocationInContainer)// should be called after moving to new pos
+    public void RegisterMoveInHistory(GameObject owner, Vector3 currentLocationInContainer)// should be called after moving to new pos
     {
-        history.Push(new HistoryPoints(owner,currentLocationInContainer));
+        history.Push(new HistoryPoints(owner, currentLocationInContainer));
     }
 
 
@@ -81,18 +81,18 @@ public class DeleveryItem : MonoBehaviour
         id = newId;
 
     }
-    public class HistoryPoints
+}
+public class HistoryPoints
+{
+    public GameObject preContainer;
+    public Vector3 preLocationInContainer;
+    public Vector3 currentLocationInContainer;
+
+
+    public HistoryPoints(GameObject owner, Vector3 currentLocationInContainer)
     {
-        public GameObject preContainer;
-        public Vector3 preLocationInContainer;
-        public Vector3 currentLocationInContainer;
-
-
-        public HistoryPoints(GameObject owner, Vector3 currentLocationInContainer)
-        {
-            this.preContainer = owner;
-            this.currentLocationInContainer = currentLocationInContainer;
-        }
-
+        this.preContainer = owner;
+        this.currentLocationInContainer = currentLocationInContainer;
     }
+
 }
