@@ -427,6 +427,7 @@ public class LoadingSpots
             return;
         }
 
+       // occupent.GetComponent<DeleveryItem>().RegisterMoveInHistory(parent,spot);
 
         occupent = newOccupent;
         isOccupied = true;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class TransactionManager : MonoBehaviour //Event invoker
@@ -13,13 +14,18 @@ public class TransactionManager : MonoBehaviour //Event invoker
 
     private bool isSenderAvailable = false;
     private Container sender;
-    private Stack<List<GameObject>> movesHistory = new Stack<List<GameObject>>(); //moves history
+    private Stack<HistoryPoint> movesHistory = new Stack<HistoryPoint>(); //moves history for every bunch
 
     private List<GameObject> itemsToTransfer = new List<GameObject>();
 
     private void Awake()
     {
         Instance = this;
+    }
+
+    private void Start()
+    {
+        Invoke("UnDoMove", 6f);
     }
 
 
@@ -45,10 +51,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         isSenderAvailable = status;
     }
 
-    public void RegisterMove(GameObject movedItem)
-    {
-        //moves.Push(movedItem.GetComponent<DeleveryItem>());
-    }
+
 
 
     public void StoreSendingItems(List<GameObject> sendingItems)
@@ -78,12 +81,38 @@ public class TransactionManager : MonoBehaviour //Event invoker
         SetSenderIsAvailable(false);
     }
 
-    public void SetSenderAndReceveItems(Container recever)
+    public void SetSenderAndReceveItems(Container sender,bool isSenderAvailable)
     {
-        SetSender(recever);
-        SetSenderIsAvailable(true);
+        SetSender(sender);
+        SetSenderIsAvailable(isSenderAvailable);
         StoreSendingItems(GetSender().Unload());
     }
+
+    /// <summary>
+    /// While regestering "newOwner" is the is the "recever" and "oldOwner" is the "sender". 
+    /// </summary>
+    public void RegisterMove(List<GameObject> transferedItems, Container newOwner, Container oldOwner) //history
+    {
+        movesHistory.Push(new HistoryPoint(transferedItems,newOwner,oldOwner));
+    }
+
+
+    /// <summary>
+    /// While UnDoMove()  the "recever" and the "sender" swap . 
+    /// </summary>
+    public void UnDoMove() //history
+    {
+       
+        HistoryPoint group = movesHistory.Peek();
+
+        SetSenderAndReceveItems(group.GetRecever(),false);//Sender
+
+        SendItemsToRecever(group.GetSender());//Recever 
+        GetItemsToTransfer().Clear();
+        
+        movesHistory.Pop();
+    }
+
 
     public bool PickAction(Container recever) //pick action is called in inputManager
     {
@@ -97,7 +126,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
             {
                 // return items to sender
                 ReturnItemsToSender();
-                itemsToTransfer.Clear();
+                GetItemsToTransfer().Clear();
                 result = true;
 
             }
@@ -107,18 +136,23 @@ public class TransactionManager : MonoBehaviour //Event invoker
 
                 if (recever.GetNoOfOccupiedSpots() == 0)   // recever is empty               *
                 {
-                    //  Just Drop 
+                    //  Just Drop
+
+                    RegisterMove(GetItemsToTransfer(),recever, GetSender());
+
                     SendItemsToRecever(recever);
-                    itemsToTransfer.Clear();
+                    GetItemsToTransfer().Clear();
                     result = true;
 
                 }
                 else if ((GetItemsToTransferItemId() == recever.GetLoadedTopItemId()) && (recever.GetNoOfFreeSpots() >= GetItemsToTransferCount()))
                 {
-
                     //  Just Drop 
+
+                    RegisterMove(GetItemsToTransfer(), recever, GetSender());
+
                     SendItemsToRecever(recever);
-                    itemsToTransfer.Clear();
+                    GetItemsToTransfer().Clear();
                     result = true;
                 }
                 else if (recever.GetNoOfFreeSpots() < GetItemsToTransferCount() ||
@@ -126,9 +160,9 @@ public class TransactionManager : MonoBehaviour //Event invoker
                 {
                     // Return picked objects to sender and pick the new top item set
                     ReturnItemsToSender();
-                    itemsToTransfer.Clear();
+                    GetItemsToTransfer().Clear();
 
-                    SetSenderAndReceveItems(recever);
+                    SetSenderAndReceveItems(recever,true);
                     result = true;
 
                 }
@@ -142,7 +176,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         {
 
 
-            SetSenderAndReceveItems(recever);
+            SetSenderAndReceveItems(recever,true);
             result = true;
         }
 
@@ -153,5 +187,33 @@ public class TransactionManager : MonoBehaviour //Event invoker
     }
 
 }
+public class HistoryPoint
+{
+    private List<GameObject> transferedItems;
+    private Container newOwner;
+    private Container oldOwner;
+    /// <summary>
+    /// While regestering "newOwner" is the is the "recever" and "oldOwner" is the "sender". 
+    /// </summary>
+    public HistoryPoint(List<GameObject> transferedItems, Container newOwner, Container oldOwner)
+    {
+        this.transferedItems = transferedItems;
+        this.newOwner = newOwner;
+        this.oldOwner = oldOwner;
+    }
 
+    public List<GameObject> GetTransferedItems()
+    {
+        return transferedItems;
+    }
+
+    public Container GetRecever()
+    {
+        return newOwner;
+    }
+    public Container GetSender()
+    {
+        return oldOwner;
+    }
+}
 

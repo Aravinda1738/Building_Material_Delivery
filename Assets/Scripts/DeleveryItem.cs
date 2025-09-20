@@ -14,7 +14,7 @@ public class DeleveryItem : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 
-    public Stack<HistoryPoints> history = new Stack<HistoryPoints>();
+    //public Stack<HistoryPoints> history = new Stack<HistoryPoints>();
 
     [SerializeField]
     private GameObject glow;
@@ -25,7 +25,7 @@ public class DeleveryItem : MonoBehaviour
     public DeleveryItem(int type, GameObject owner)
     {
         this.id = type;
-        history.Push(new HistoryPoints(owner, transform.position));
+       // history.Push(new HistoryPoints(owner, transform.position));
     }
 
     private void Start()
@@ -37,17 +37,18 @@ public class DeleveryItem : MonoBehaviour
     }
 
 
-    public void GoBackToPreviousPoint()
-    {
-        this.gameObject.transform.SetParent(history.Peek().preContainer.transform);
-        // this.gameObject.transform.position=
-    }
+    //public void GoBackToPreviousPoint()
+    //{
+    //    history.Pop();
+    //    gameObject.transform.SetParent(history.Peek().preContainer.transform);
+    //    // this.gameObject.transform.position=
+    //}
 
 
-    public void RegisterMoveInHistory(GameObject owner, Vector3 currentLocationInContainer)// should be called after moving to new pos
-    {
-        history.Push(new HistoryPoints(owner, currentLocationInContainer));
-    }
+    //public void RegisterMoveInHistory(GameObject owner, Vector3 currentLocationInContainer)// should be called after moving to new pos
+    //{
+    //    history.Push(new HistoryPoints(owner, currentLocationInContainer));
+    //}
 
 
     private void OnValidate()
@@ -80,17 +81,17 @@ public class DeleveryItem : MonoBehaviour
 
     }
 }
-public class HistoryPoints
-{
-    public GameObject preContainer;
-    public Vector3 preLocationInContainer;
-    public Vector3 currentLocationInContainer;
+//public class HistoryPoints
+//{
+//    public GameObject preContainer;
+//   // public Vector3 preLocationInContainer;
+//    public Vector3 currentLocationInContainer;
 
 
-    public HistoryPoints(GameObject owner, Vector3 currentLocationInContainer)
-    {
-        this.preContainer = owner;
-        this.currentLocationInContainer = currentLocationInContainer;
-    }
+//    public HistoryPoints(GameObject owner, Vector3 currentLocationInContainer)
+//    {
+//             preContainer = owner;
+//        this.currentLocationInContainer = currentLocationInContainer;
+//    }
 
-}
+//}
