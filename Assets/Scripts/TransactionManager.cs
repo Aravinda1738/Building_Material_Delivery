@@ -10,7 +10,8 @@ public class TransactionManager : MonoBehaviour //Event invoker
     [Header("Event Channel")]
     [SerializeField]
     private SO_TransactionEventChannel TransactionEventChannel;
-
+    [SerializeField]
+    private SO_Level_Manager levelData;
 
     private bool isSenderAvailable = false;
     private Container sender;
@@ -59,7 +60,13 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public void AddCompletedContainerId(int id) { 
       
         completedContainerIds.Add(id);
-     
+
+        DebuggingTools.PrintMessage("red", $" completedContainerIds.Count{completedContainerIds.Count}  levelData.totalTypesInGame{levelData.totalTypesInGame} ", this);
+
+        if (completedContainerIds.Count ==  levelData.totalTypesInGame)
+        {
+            TransactionEventChannel.OnWinAction();
+        }
     }
 
     public void StoreSendingItems(List<GameObject> sendingItems)

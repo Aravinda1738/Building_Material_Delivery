@@ -22,9 +22,22 @@ public class SO_Level_Manager : ScriptableObject
     [Header("Spawn Object")]
     public GameObject Vehical;
 
-   
-   
+
+    [Header("Game Data")]
+    public int difficultyLevel = 3;
+    public bool useDificultyForEmptyContainers = true;
+    [HideInInspector]
+    public int totalTypesInGame;
+
+    [Tooltip("important point: must not excede totalSpawnPoints ")]
+    public int emptyContainers = 2;
 
 
-
+    private void OnValidate()
+    {
+        if(emptyContainers> totalSpawnPoints)
+        {
+            emptyContainers= totalSpawnPoints;
+        }
+    }
 }

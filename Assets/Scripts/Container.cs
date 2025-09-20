@@ -113,14 +113,35 @@ public class Container : MonoBehaviour
             loadingSpots[emptySpotIndexes[i]].AddNewOccupent(itemsToLoad[i], sp);
 
             noOfOccupiedSpots++;
-            
+
         }
         DebuggingTools.PrintMessage("yellow", $"After update Loaded items -> {noOfOccupiedSpots}", this);
 
-        if (noOfOccupiedSpots==loadingSpots.Count)
-        {
 
+
+
+        //winCheck
+        int complete=0;
+        for (int i=1; i <loadingSpots.Count-1 ; i++)
+        {
+            if (loadingSpots[i].isOccupied)
+            {
+                if (loadingSpots[0].occupent.GetComponent<DeleveryItem>().GetItemTypeId() == loadingSpots[i].occupent.GetComponent<DeleveryItem>().GetItemTypeId())
+                {
+                    complete++;
+                        Debug.LogError("loadingSpots.Count  " + loadingSpots.Count+ "complete  "+ complete );
+                    if (complete == loadingSpots.Count)
+                    {
+                        TransactionManager.Instance.AddCompletedContainerId(containerId);
+                        Debug.LogError("wadwadwd"+ containerId);
+                    }
+                }
+            }
+            
         }
+
+
+        
 
     }
 
@@ -155,7 +176,7 @@ public class Container : MonoBehaviour
                 }
 
 
-                
+
 
             }
         }

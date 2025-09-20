@@ -5,10 +5,20 @@ using UnityEngine;
 public class SO_TransactionEventChannel : ScriptableObject
 {
     public event Action<Container> onMove;
+    public event Action onWin;
+    public event Action onGameOver;
 
 
     public void OnMoveAction(Container container)
     {
         onMove?.Invoke(container);
+    }
+    public void OnWinAction()
+    {
+        onWin?.Invoke();
+    }
+    public void OnGameOverAction()
+    {
+        onGameOver?.Invoke();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,8 +23,8 @@ public class LevelManager : MonoBehaviour
 
    
 
-    //Debug Variables
-    [SerializeField]
+     //Debug Variables
+     [SerializeField]
     private SO_DebugMode debugMode;
     [SerializeField]
     private bool canSpawnDebugobj;
@@ -184,28 +185,35 @@ public class LevelManager : MonoBehaviour
 
 
         int emptyContainers = 0;
-
-        switch (DifficultyLevel)
+        if (levelManagerData.useDificultyForEmptyContainers)
         {
-            case 1:
-                emptyContainers = 1;
-                break;
-            case 2:
-                emptyContainers = 1;
-                break;
-            case 3:
-                emptyContainers = 2;
-                break;
-            case 4:
-                emptyContainers = 2;
-                break;
-            case 5:
-                emptyContainers = 3;
-                break;
-            default:
-                emptyContainers = 2;
-                break;
+            switch (DifficultyLevel)
+            {
+                case 1:
+                    emptyContainers = 1;
+                    break;
+                case 2:
+                    emptyContainers = 1;
+                    break;
+                case 3:
+                    emptyContainers = 2;
+                    break;
+                case 4:
+                    emptyContainers = 2;
+                    break;
+                case 5:
+                    emptyContainers = 3;
+                    break;
+                default:
+                    emptyContainers = 2;
+                    break;
+            }
         }
+        else
+        {
+            emptyContainers=levelManagerData.emptyContainers;
+        }
+        
         int typesToSpawn = 0;
         int availableSpots = levelManagerData.totalSpawnPoints - emptyContainers;
         for (int i = 0; i < availableSpots; i++, typesToSpawn++) // generate itemId in array // unshuffed
@@ -231,7 +239,7 @@ public class LevelManager : MonoBehaviour
         }
 
         List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(DifficultyLevel, baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
-
+        levelManagerData.totalTypesInGame=setsOfItmsPerContainer.Count;
         if (debugMode.isDebugMode)
         {
 
@@ -292,27 +300,132 @@ public class LevelManager : MonoBehaviour
 
 
 
+    //private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs, int splitAmount) //swap V4
+    //{
+    //    List<int> temp = new List<int>();
+
+
+    //    foreach (var item in arr)
+    //    {
+
+    //        temp.Add(item);
+
+    //    }
+
+    //    int pairs = 0;
+
+
+
+
+
+    //    DebuggingTools.PrintList("temp", temp);
+
+    //    for (int k = 0; k < temp.Count; k++)// sort pairs in temp
+    //    {
+    //        if (k + 2 < temp.Count)
+    //        {
+    //            if (temp[k] == temp[k + 1] && temp[k] != temp[k + 2])
+    //            {
+    //                k += 2;
+    //                pairs++;
+    //                continue;
+    //            }
+    //        }
+
+
+
+
+
+    //        for (int j = 0; j < temp.Count; j++)
+    //        {
+
+
+    //            if (k + 1 < temp.Count)
+    //            {
+
+    //                if (temp[k] == temp[j] && j != k)
+    //                {
+
+
+
+    //                    if (pairs == requiredNoOfPairs)
+    //                    {
+
+
+    //                        if (debugMode.isDebugMode)
+    //                            DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
+
+    //                        return splitPairs(temp, splitAmount);
+
+
+
+    //                    }
+
+
+    //                    if (k + 3 < temp.Count && k - 1 >= 0)
+    //                    {
+    //                        if (temp[k] == temp[k + 1] && temp[k] == temp[k + 2] && temp[k] == temp[k + 3])
+    //                        {
+    //                            int o = temp[k + 1];
+    //                            int randomIndex = k - 1;
+
+
+    //                            temp[k + 1] = temp[randomIndex];
+    //                            temp[randomIndex] = o;
+    //                        }
+    //                        else
+    //                        {
+    //                            int t = temp[k + 1];
+    //                            temp[k + 1] = temp[j];
+    //                            temp[j] = t;
+    //                        }
+    //                    }
+
+
+
+
+    //                    pairs++;
+    //                }
+
+    //            }
+
+
+    //        }
+
+
+    //    }
+
+    //    arr.Clear();
+
+
+
+    //    if (debugMode.isDebugMode)
+    //        DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
+
+
+
+    //    return splitPairs(temp, splitAmount);
+    //}
+
+
+
+
     private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs, int splitAmount) //swap V4
     {
         List<int> temp = new List<int>();
 
-
         foreach (var item in arr)
         {
-
             temp.Add(item);
-
         }
 
         int pairs = 0;
 
-
-
-
-
         DebuggingTools.PrintList("temp", temp);
 
-        for (int k = 0; k < temp.Count; k++)// sort pairs in temp
+        int lastPairIndex = -1; // Track the last index included in pairs
+
+        for (int k = 0; k < temp.Count; k++) // sort pairs in temp
         {
             if (k + 2 < temp.Count)
             {
@@ -320,39 +433,24 @@ public class LevelManager : MonoBehaviour
                 {
                     k += 2;
                     pairs++;
+                    lastPairIndex = k - 1; // last paired item index
                     continue;
                 }
             }
 
-
-
-
-
             for (int j = 0; j < temp.Count; j++)
             {
-
-
                 if (k + 1 < temp.Count)
                 {
-
                     if (temp[k] == temp[j] && j != k)
                     {
-
-
-
                         if (pairs == requiredNoOfPairs)
                         {
-
-
                             if (debugMode.isDebugMode)
                                 DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
 
-                            return splitPairs(temp, splitAmount);
-
-
-
+                            goto AfterPairs; // Break out to shuffle leftovers
                         }
-
 
                         if (k + 3 < temp.Count && k - 1 >= 0)
                         {
@@ -360,7 +458,6 @@ public class LevelManager : MonoBehaviour
                             {
                                 int o = temp[k + 1];
                                 int randomIndex = k - 1;
-
 
                                 temp[k + 1] = temp[randomIndex];
                                 temp[randomIndex] = o;
@@ -373,31 +470,55 @@ public class LevelManager : MonoBehaviour
                             }
                         }
 
-
-
-
                         pairs++;
+                        lastPairIndex = Math.Max(lastPairIndex, k + 1);
                     }
-
                 }
-
-
             }
+        }
 
+    AfterPairs:
 
+        // Shuffle remaining items after lastPairIndex
+        if (lastPairIndex < temp.Count - 1)
+        {
+            FisherYatesShuffle(temp, lastPairIndex + 1);
+        }
+
+        // Prevent quadruple consecutive identical items
+        for (int k = 0; k < temp.Count - 3; k++)
+        {
+            if (temp[k] == temp[k + 1] && temp[k] == temp[k + 2] && temp[k] == temp[k + 3])
+            {
+                int swapIndex = -1;
+                for (int m = k + 4; m < temp.Count; m++)
+                {
+                    if (temp[m] != temp[k])
+                    {
+                        swapIndex = m;
+                        break;
+                    }
+                }
+                if (swapIndex != -1)
+                {
+                    int t = temp[k + 3];
+                    temp[k + 3] = temp[swapIndex];
+                    temp[swapIndex] = t;
+                }
+            }
         }
 
         arr.Clear();
 
-
-
         if (debugMode.isDebugMode)
             DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
 
-
-
         return splitPairs(temp, splitAmount);
     }
+
+
+
+
 
 
     private List<List<int>> splitPairs(List<int> temp, int splitAmount)
@@ -432,6 +553,17 @@ public class LevelManager : MonoBehaviour
         return list;
     }
 
+    private static void FisherYatesShuffle<T>(List<T> list, int startIndex)
+    {
+        System.Random rng = new System.Random();
+        for (int i = list.Count - 1; i > startIndex; i--)
+        {
+            int swapIndex = rng.Next(startIndex, i + 1);
+            T temp = list[i];
+            list[i] = list[swapIndex];
+            list[swapIndex] = temp;
+        }
+    }
     private List<List<int>> SplitList(List<int> source, int splitAmount)
     {
         var result = new List<List<int>>();
