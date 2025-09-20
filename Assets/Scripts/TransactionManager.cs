@@ -25,7 +25,10 @@ public class TransactionManager : MonoBehaviour //Event invoker
 
     private void Start()
     {
-        Invoke("UnDoMove", 6f);
+       //Invoke("UnDoMove", 8f);
+       //Invoke("UnDoMove", 12f);
+       // Invoke("UnDoMove", 15f);
+       // Invoke("UnDoMove", 20f);
     }
 
 
@@ -57,7 +60,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public void StoreSendingItems(List<GameObject> sendingItems)
     {
 
-        GetItemsToTransfer().Clear();
+       // GetItemsToTransfer().Clear();
         SetItemsToTransfer(sendingItems);
     }
 
@@ -67,7 +70,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public int GetItemsToTransferCount() { return itemsToTransfer.Count; }
     public int GetItemsToTransferItemId()
     {
-        return GetItemsToTransfer()[0].GetComponent<DeleveryItem>().GetItemId();
+        return GetItemsToTransfer()[0].GetComponent<DeleveryItem>().GetItemTypeId();
     }
 
     public void ReturnItemsToSender()
@@ -87,13 +90,22 @@ public class TransactionManager : MonoBehaviour //Event invoker
         SetSenderIsAvailable(isSenderAvailable);
         StoreSendingItems(GetSender().Unload());
     }
+    public void SetSenderAndReceveItems(Container sender, List<GameObject> undoObjs, bool isSenderAvailable)
+    {
+        SetSender(sender);
+        SetSenderIsAvailable(isSenderAvailable);
+        StoreSendingItems(GetSender().Unload(undoObjs));
+    }
 
     /// <summary>
     /// While regestering "newOwner" is the is the "recever" and "oldOwner" is the "sender". 
     /// </summary>
     public void RegisterMove(List<GameObject> transferedItems, Container newOwner, Container oldOwner) //history
     {
-        movesHistory.Push(new HistoryPoint(transferedItems,newOwner,oldOwner));
+        List<GameObject> temp = new List<GameObject>();
+       transferedItems.ForEach(item => temp.Add(item));
+        movesHistory.Push(new HistoryPoint(transferedItems, newOwner,oldOwner));
+        DebuggingTools.PrintMessage("blue", $" RegisterMove recever{movesHistory.Peek().GetRecever().name}  sender{movesHistory.Peek().GetSender().name} count {movesHistory.Peek().GetTransferedItems().Count}" , this);
     }
 
 
@@ -102,13 +114,13 @@ public class TransactionManager : MonoBehaviour //Event invoker
     /// </summary>
     public void UnDoMove() //history
     {
-       
+        DebuggingTools.PrintMessage("blue", $"UNDO MOVE", this);
         HistoryPoint group = movesHistory.Peek();
 
-        SetSenderAndReceveItems(group.GetRecever(),false);//Sender
+        SetSenderAndReceveItems(group.GetRecever(),group.GetTransferedItems(),false);//Sender
 
         SendItemsToRecever(group.GetSender());//Recever 
-        GetItemsToTransfer().Clear();
+       // GetItemsToTransfer().Clear();
         
         movesHistory.Pop();
     }
@@ -126,7 +138,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
             {
                 // return items to sender
                 ReturnItemsToSender();
-                GetItemsToTransfer().Clear();
+                //GetItemsToTransfer().Clear();
                 result = true;
 
             }
@@ -141,7 +153,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
                     RegisterMove(GetItemsToTransfer(),recever, GetSender());
 
                     SendItemsToRecever(recever);
-                    GetItemsToTransfer().Clear();
+                   // GetItemsToTransfer().Clear();
                     result = true;
 
                 }
@@ -152,7 +164,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
                     RegisterMove(GetItemsToTransfer(), recever, GetSender());
 
                     SendItemsToRecever(recever);
-                    GetItemsToTransfer().Clear();
+                   // GetItemsToTransfer().Clear();
                     result = true;
                 }
                 else if (recever.GetNoOfFreeSpots() < GetItemsToTransferCount() ||
@@ -160,7 +172,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
                 {
                     // Return picked objects to sender and pick the new top item set
                     ReturnItemsToSender();
-                    GetItemsToTransfer().Clear();
+                    //GetItemsToTransfer().Clear();
 
                     SetSenderAndReceveItems(recever,true);
                     result = true;

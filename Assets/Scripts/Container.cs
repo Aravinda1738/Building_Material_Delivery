@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class Container : MonoBehaviour
 {
@@ -77,7 +78,7 @@ public class Container : MonoBehaviour
             loadingSpots[i].isOccupied = true;
             loadingSpots[i].occupent = temp;
             // GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
-            temp.name = $"Item_{i}-Of Type -> {temp.GetComponent<DeleveryItem>().GetItemId()}";
+            temp.name = $"Item_{i}-Of Type -> {temp.GetComponent<DeleveryItem>().GetItemTypeId()}";
             // temp.transform.localScale = new Vector3(.5f, .5f, .5f);
             temp.transform.SetParent(sp.transform);
             //loadedItems.Push(temp.GetComponent<DeleveryItem>());
@@ -266,6 +267,39 @@ public class Container : MonoBehaviour
         return FindValidItemsAndPick();
 
     }
+    public List<GameObject> Unload(List<GameObject> unDoObjs)
+    {
+        List<GameObject> temp = new List<GameObject>();
+
+
+        foreach (var obj in unDoObjs)
+        {
+
+
+            for (int i = loadingSpots.Count - 1; i >= 0; i--)
+            {
+                if (loadingSpots[i].isOccupied)
+                {
+                    if (loadingSpots[i].occupent.GetComponent<DeleveryItem>().GetItemTypeId() == obj.GetComponent<DeleveryItem>().GetItemTypeId())
+                    {
+                        temp.Add(loadingSpots[i].occupent);
+                        loadingSpots[i].isOccupied = false;
+                        loadingSpots[i].occupent = null;
+                        noOfOccupiedSpots--;
+                        break;
+                    }
+                }
+
+
+                
+
+            }
+        }
+
+
+        return temp;
+
+    }
     public void MoveOut()
     {
         isMovingOut = true;
@@ -338,7 +372,7 @@ public class Container : MonoBehaviour
         }
 
 
-        if (A.GetItemId() == b.GetItemId())
+        if (A.GetItemTypeId() == b.GetItemTypeId())
         {
             return true;
         }
@@ -364,22 +398,22 @@ public class Container : MonoBehaviour
     }
     public int GetNoOfFreeSpots()
     {
-        return   loadingSpots.Count- noOfOccupiedSpots;
+        return loadingSpots.Count - noOfOccupiedSpots;
     }
 
     public int GetLoadedTopItemId()
     {
-        for (int i = loadingSpots.Count-1; noOfOccupiedSpots >=0; i--)
+        for (int i = loadingSpots.Count - 1; noOfOccupiedSpots >= 0; i--)
         {
             if (loadingSpots[i].isOccupied)
             {
-                return loadingSpots[noOfOccupiedSpots - 1].occupent.GetComponent<DeleveryItem>().GetItemId();
+                return loadingSpots[noOfOccupiedSpots - 1].occupent.GetComponent<DeleveryItem>().GetItemTypeId();
             }
-            
+
         }
 
         return -1;
-       
+
     }
 
 }
@@ -427,7 +461,7 @@ public class LoadingSpots
             return;
         }
 
-       // occupent.GetComponent<DeleveryItem>().RegisterMoveInHistory(parent,spot);
+
 
         occupent = newOccupent;
         isOccupied = true;
@@ -436,5 +470,13 @@ public class LoadingSpots
         RemoveGlow();
     }
 
+
+    public void RemoveOccupent()
+    {
+        occupent.GetComponent<DeleveryItem>().AddGlow();
+
+        isOccupied = false;
+        occupent = null;
+    }
 
 }
