@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
-using static UnityEditor.Progress;
 
 public static class DebuggingTools
 {
@@ -135,6 +132,12 @@ public static class DebuggingTools
         Debug.Log($"{message} || From Class - > {from}");
 
     }
+    public static void PrintMessage(string color,string message, object from)
+    {
+
+        Debug.Log($"<color={color}>{message} || From Class - > {from}</color>");
+
+    }
 
 
     public enum DebugMessageType
@@ -143,5 +146,8 @@ public static class DebuggingTools
         WARNING,
         ERROR
     }
+
+
+    
 }
 

@@ -1,11 +1,10 @@
-using UnityEngine;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEngine;
 
-public  class TransactionManager : MonoBehaviour //Event invoker
+public class TransactionManager : MonoBehaviour //Event invoker
 {
 
-    public static TransactionManager Instance {  get; private set; }
+    public static TransactionManager Instance { get; private set; }
 
     [Header("Event Channel")]
     [SerializeField]
@@ -41,10 +40,10 @@ public  class TransactionManager : MonoBehaviour //Event invoker
     }
 
 
-    public void SetSenderIsAvailable(bool status) 
-    { 
-        isSenderAvailable=status;
-    }    
+    public void SetSenderIsAvailable(bool status)
+    {
+        isSenderAvailable = status;
+    }
 
     public void RegisterMove(GameObject movedItem)
     {
@@ -55,21 +54,104 @@ public  class TransactionManager : MonoBehaviour //Event invoker
     public void StoreSendingItems(List<GameObject> sendingItems)
     {
 
-        itemsToTransfer.Clear();
-        itemsToTransfer = sendingItems;
+        GetItemsToTransfer().Clear();
+        SetItemsToTransfer(sendingItems);
+    }
 
-        Debug.LogError("1-1-1-1-1-1-1-1-------"+ itemsToTransfer.Count);
+    public List<GameObject> GetItemsToTransfer() { return itemsToTransfer; }
+    public void SetItemsToTransfer(List<GameObject> sendingItems) { itemsToTransfer = sendingItems; }
+
+    public int GetItemsToTransferCount() { return itemsToTransfer.Count; }
+    public int GetItemsToTransferItemId()
+    {
+        return GetItemsToTransfer()[0].GetComponent<DeleveryItem>().GetItemId();
+    }
+
+    public void ReturnItemsToSender()
+    {
+        GetSender().Load(GetItemsToTransfer());
+        SetSenderIsAvailable(false);
+    }
+    public void SendItemsToRecever(Container recever)
+    {
+        recever.Load(GetItemsToTransfer());
+        SetSenderIsAvailable(false);
+    }
+
+    public void SetSenderAndReceveItems(Container recever)
+    {
+        SetSender(recever);
+        SetSenderIsAvailable(true);
+        StoreSendingItems(GetSender().Unload());
+    }
+
+    public bool PickAction(Container recever) //pick action is called in inputManager
+    {
+        bool result = false;
+
+        if (IsSenderAvailable())
+        {
+
+
+            if (recever.GetContainerId() == GetSender().GetContainerId()) //clicked the same container  *
+            {
+                // return items to sender
+                ReturnItemsToSender();
+                itemsToTransfer.Clear();
+                result = true;
+
+            }
+            else //clicked a different container
+            {
+
+
+                if (recever.GetNoOfOccupiedSpots() == 0)   // recever is empty               *
+                {
+                    //  Just Drop 
+                    SendItemsToRecever(recever);
+                    itemsToTransfer.Clear();
+                    result = true;
+
+                }
+                else if ((GetItemsToTransferItemId() == recever.GetLoadedTopItemId()) && (recever.GetNoOfFreeSpots() >= GetItemsToTransferCount()))
+                {
+
+                    //  Just Drop 
+                    SendItemsToRecever(recever);
+                    itemsToTransfer.Clear();
+                    result = true;
+                }
+                else if (recever.GetNoOfFreeSpots() < GetItemsToTransferCount() ||
+                    GetItemsToTransferItemId() != recever.GetLoadedTopItemId())  // recever has not enough space or recever's top item and items to transfer are not same   *
+                {
+                    // Return picked objects to sender and pick the new top item set
+                    ReturnItemsToSender();
+                    itemsToTransfer.Clear();
+
+                    SetSenderAndReceveItems(recever);
+                    result = true;
+
+                }
+            }
+
+
+
+
+        }
+        else
+        {
+
+
+            SetSenderAndReceveItems(recever);
+            result = true;
+        }
+
+
+        return result;
 
 
     }
 
-
-
-    public List<GameObject> GetItemsToTransfer() {
-
-        DebuggingTools.PrintMessage($" 0 Load CALLED Receved Items -> {itemsToTransfer.Count}",this);
-        return itemsToTransfer; 
-    }
 }
 
 

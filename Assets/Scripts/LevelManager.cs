@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
-using static Unity.VisualScripting.Member;
-using static UnityEditor.Progress;
+
 
 public class LevelManager : MonoBehaviour
 {
