@@ -91,56 +91,6 @@ public class Container : MonoBehaviour
 
 
 
-    //public void PickAction()
-    //{
-
-    //    if (TransactionManager.Instance.IsSenderAvailable())
-    //    {
-
-    //        //check if unload is possable
-
-
-    //        bool loadSuccessful = Load();
-
-    //        if (!loadSuccessful && this.containerId != TransactionManager.Instance.GetSender().containerId)
-    //        {
-
-    //            if (noOfOccupiedSpots != 0)
-    //            {
-
-
-
-    //                Unload();
-    //            }
-    //        }
-
-    //        //1Done //if empty -> DROP
-    //        //2Done //if celected Container 1 and container 2 are same return the items , dose not cost a move
-    //        //3Drop//if picked item & top item of the 2nd cotainer are same & there is  enough space-> DROP
-
-    //        //4if 2nd cotainer is not empty and the top item not same -> DROP THE PICKED ITEM FROM WHERE IT WAS PICKED AND PICK THE NEW TOP GROUP
-    //        //5if 2nd cotainer has same type of item on top but its full or dont have enough space-> DROP THE PICKED ITEM FROM WHERE IT WAS PICKED AND PICK THE NEW TOP GROUP
-
-    //    }
-    //    else
-    //    {
-    //        // pickup the top bunch
-    //        if (noOfOccupiedSpots != 0)
-    //        {
-
-
-
-    //            Unload();
-
-    //        }
-
-    //    }
-
-
-
-
-    //}
-
 
     public void Load(List<GameObject> itemsToLoad)
     {
@@ -163,101 +113,15 @@ public class Container : MonoBehaviour
             loadingSpots[emptySpotIndexes[i]].AddNewOccupent(itemsToLoad[i], sp);
 
             noOfOccupiedSpots++;
-            /*loadingSpots[emptySpotIndexes[i]].occupent = itemsToLoad[i];
-           loadingSpots[emptySpotIndexes[i]].isOccupied = true;
-            itemsToLoad[i].transform.parent = sp.transform;
-            loadingSpots[emptySpotIndexes[i]].ResetToSpotPos();
-            loadingSpots[emptySpotIndexes[i]].RemoveGlow();*/
+            
         }
         DebuggingTools.PrintMessage("yellow", $"After update Loaded items -> {noOfOccupiedSpots}", this);
 
-        //foreach (GameObject item in itemsToLoad)
-        //{
+        if (noOfOccupiedSpots==loadingSpots.Count)
+        {
 
+        }
 
-        //    for (int i = loadingSpots.Count - 1; i >= 0; i--)
-        //    {
-        //        if (!loadingSpots[i].isOccupied)
-        //        {
-        //            item.transform.parent = sp.transform;
-        //            item.transform.position = loadingSpots[i].spot;
-
-        //            item.name = $"Item_{i}";
-        //            item.
-
-        //            loadingSpots[i].occupent = item;
-        //            loadingSpots[i].isOccupied = true;
-
-        //            noOfOccupiedSpots++;
-
-        //        }
-
-
-        //    }
-
-        //}
-
-
-        //recevedItems = TransactionManager.Instance.GetItemsToTransfer();
-        //int occupiedSpots = 0;
-        //bool result = true;
-        //Container recever = this;
-
-        //if (noOfOccupiedSpots != 0)
-        //{
-
-        //    if (this.containerId == TransactionManager.Instance.GetSender().containerId ||
-        //        !TopItemMatchCheck(this.recevedItems[0].GetComponent<DeleveryItem>(), loadingSpots[noOfOccupiedSpots - 1].occupent.GetComponent<DeleveryItem>()))
-        //    {
-        //        result = false;
-
-        //        recever = TransactionManager.Instance.GetSender();//to return to sender if not possable    4
-        //    }
-
-        //}
-        //foreach (GameObject recevedItem in this.recevedItems)
-        //{
-
-        //    // load in empty spots
-        //    if (this.recevedItems.Count <= recever.loadingSpots.Count || recever.noOfOccupiedSpots == 0)
-        //    {
-
-        //        for (int i = 0; i < recever.loadingSpots.Count; i++) //find a spot to drop in recever
-        //        {
-
-
-
-        //            if (!recever.loadingSpots[i].isOccupied)
-        //            {
-        //                recevedItem.transform.parent = recever.sp.transform;
-        //                recevedItem.transform.position = recever.loadingSpots[i].spot;
-
-        //                recevedItem.name = $"Item_{i}";
-        //                recevedItem.GetComponent<DeleveryItem>().RemoveGlow();
-
-        //                recever.loadingSpots[i].occupent = recevedItem;
-        //                recever.loadingSpots[i].isOccupied = true;
-
-        //                occupiedSpots++;
-        //                break;
-        //            }
-        //            occupiedSpots++;
-        //        }
-        //    }
-
-
-
-
-        //}
-
-        //  TransactionManager.Instance.SetSenderIsAvailable(false);
-        //  this.recevedItems.Clear();
-        //if (this.containerId == TransactionManager.Instance.GetSender().containerId)
-        //{
-        //    this.PickAction();
-        //}
-        // DebuggingTools.PrintMessage($" END Load CALLED Receved Items -> {recevedItems.Count} Occupied Spots {occupiedSpots}/{recever.containerData.totalItemsCanHold}", this);
-        //return result;
     }
 
 

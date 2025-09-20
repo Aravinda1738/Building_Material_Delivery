@@ -7,7 +7,7 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private SO_DebugMode debugMode;
 
-    private bool canProcessTouch = true;
+   
 
     private void OnEnable()
     {
@@ -31,9 +31,8 @@ public class InputManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         RaycastHit hit;
 
-        if (canProcessTouch)
-        {
-           canProcessTouch = false;
+      
+          
             if (Physics.Raycast(ray, out hit))
             {
                 Container container = hit.collider.GetComponent<Container>();
@@ -42,13 +41,9 @@ public class InputManager : MonoBehaviour
                 {
 
                     
-                    canProcessTouch = TransactionManager.Instance.PickAction(container);
+                     TransactionManager.Instance.PickAction(container);
                 }
-                else
-                {
-                    canProcessTouch = true;
-
-                }
+                
 
 
                 if (debugMode.isDebugMode)
@@ -59,17 +54,7 @@ public class InputManager : MonoBehaviour
                 }
             }
 
-        }
-        else
-        {
-            if (debugMode.isDebugMode)
-            {
-
-
-                DebuggingTools.PrintMessage("red", " In Process ", this);
-            }
-        }
-
+        
 
     }
 }

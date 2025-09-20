@@ -17,6 +17,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
     private Stack<HistoryPoint> movesHistory = new Stack<HistoryPoint>(); //moves history for every bunch
 
     private List<GameObject> itemsToTransfer = new List<GameObject>();
+    private List<int> completedContainerIds = new List<int>();
 
     private void Awake()
     {
@@ -55,7 +56,11 @@ public class TransactionManager : MonoBehaviour //Event invoker
     }
 
 
-
+    public void AddCompletedContainerId(int id) { 
+      
+        completedContainerIds.Add(id);
+     
+    }
 
     public void StoreSendingItems(List<GameObject> sendingItems)
     {
@@ -129,6 +134,11 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public bool PickAction(Container recever) //pick action is called in inputManager
     {
         bool result = false;
+
+        //do nothing
+        if (completedContainerIds.Contains(recever.GetContainerId())) {
+            return false;
+        }
 
         if (IsSenderAvailable())
         {
