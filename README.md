@@ -5,12 +5,17 @@ This puzzle game challenges players to sort and deliver construction materials b
 
 ----------------------------------------------------
 
+Download the APK -> Install -> Play
+
 APK location 
 Building_Material_Delivery/APK
 
 ----------------------------------------------------
 
 DEV
+
+Unity version 6.2
+
 
 1. The designer can use the SO_LevelManager (located in Scripts/SO_Items/) to configure level properties and adjust the overall layout.
 
