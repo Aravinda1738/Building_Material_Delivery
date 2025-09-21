@@ -11,27 +11,64 @@ public class TransactionManager : MonoBehaviour //Event invoker
     [SerializeField]
     private SO_TransactionEventChannel TransactionEventChannel;
     [SerializeField]
+    private SO_UIChannel uIChannel;
+
+    [SerializeField]
     private SO_Level_Manager levelData;
 
     private bool isSenderAvailable = false;
+    private bool isLevelEnd    = false;
     private Container sender;
     private Stack<HistoryPoint> movesHistory = new Stack<HistoryPoint>(); //moves history for every bunch
 
     private List<GameObject> itemsToTransfer = new List<GameObject>();
     private List<int> completedContainerIds = new List<int>();
 
+
+
+    private void OnEnable()
+    {
+        
+        if (uIChannel != null)
+        {
+            uIChannel.onNextLevel += LevelRestart;
+            uIChannel.onBackToHome += QuitLevel;
+
+
+        }
+        else
+        {
+            DebuggingTools.PrintMessage("UI Channel is empty",DebuggingTools.DebugMessageType.ERROR,this);
+        }
+
+    }
+
+
+    private void OnDisable()
+    {
+      
+        if (uIChannel != null)
+        {
+            uIChannel.onNextLevel -= LevelRestart;
+            uIChannel.onBackToHome -= QuitLevel;
+
+
+        }
+
+
+    }
+
+
+
+
+
+
+
     private void Awake()
     {
         Instance = this;
     }
 
-    private void Start()
-    {
-       //Invoke("UnDoMove", 8f);
-       //Invoke("UnDoMove", 12f);
-       // Invoke("UnDoMove", 15f);
-       // Invoke("UnDoMove", 20f);
-    }
 
 
     public Container GetSender()
@@ -60,13 +97,32 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public void AddCompletedContainerId(int id) { 
       
         completedContainerIds.Add(id);
+        
 
-        DebuggingTools.PrintMessage("red", $" completedContainerIds.Count{completedContainerIds.Count}  levelData.totalTypesInGame{levelData.totalTypesInGame} ", this);
-
-        if (completedContainerIds.Count ==  levelData.totalTypesInGame)
+        if (completedContainerIds.Count ==  levelData.GetTotalTypesInGame())
         {
+            
+            isLevelEnd = true;
+            QuitLevel();
             TransactionEventChannel.OnWinAction();
+
+            DebuggingTools.PrintMessage("green", "You Win!!! ", this);
         }
+       
+    }
+
+    private void LevelRestart()
+    {
+        isLevelEnd = false;
+
+    }
+
+    private void QuitLevel()
+    {
+        SetSender(null);
+        GetItemsToTransfer().Clear();
+        movesHistory.Clear();
+        completedContainerIds.Clear();
     }
 
     public void StoreSendingItems(List<GameObject> sendingItems)
@@ -143,7 +199,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         bool result = false;
 
         //do nothing
-        if (completedContainerIds.Contains(recever.GetContainerId())) {
+        if (completedContainerIds.Contains(recever.GetContainerId())||isLevelEnd) {
             return false;
         }
 

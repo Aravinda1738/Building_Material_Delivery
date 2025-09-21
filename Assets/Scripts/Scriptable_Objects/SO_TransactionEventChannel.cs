@@ -6,6 +6,7 @@ public class SO_TransactionEventChannel : ScriptableObject
 {
     public event Action<Container> onMove;
     public event Action onWin;
+   
     public event Action onGameOver;
 
 
@@ -21,4 +22,6 @@ public class SO_TransactionEventChannel : ScriptableObject
     {
         onGameOver?.Invoke();
     }
+
+
 }

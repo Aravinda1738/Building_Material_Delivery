@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 public class LevelManager : MonoBehaviour
 {
-
+    [Header("Game Data")]
     [SerializeField]
     private GameObject startPos;
     [SerializeField]
@@ -15,16 +16,21 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private SO_Item itemData;
     [SerializeField]
-    private int DifficultyLevel = 3;// (5,4)-easy,(2,3)-medium,0-hard
+    private SO_TransactionEventChannel TransactionEventChannel;
+    [SerializeField]
+    private SO_UIChannel uIChannel;
+    
+    [SerializeField]
+    private float clearlevelDelay = 5;
 
 
     private List<Vector3> cells = new List<Vector3>();
     private List<Container> containers = new List<Container>();
 
-   
 
      //Debug Variables
-     [SerializeField]
+    [Header("Debug")]
+    [SerializeField]
     private SO_DebugMode debugMode;
     [SerializeField]
     private bool canSpawnDebugobj;
@@ -33,6 +39,53 @@ public class LevelManager : MonoBehaviour
     private List<GameObject> debugObjs = new List<GameObject>();
 
 
+
+    private void OnEnable()
+    {
+        if (TransactionEventChannel!=null)
+        {
+            TransactionEventChannel.onWin += ClearLevel;
+        }
+        else
+        {
+            DebuggingTools.PrintMessage("TransactionEvent Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
+
+        }
+
+        if (uIChannel!=null)
+        {
+            uIChannel.onStartGame += StartLevel;
+            uIChannel.onNextLevel += PrepairNextLevel;
+            uIChannel.onBackToHome += QuitLevel;
+        }
+        else
+        {
+            DebuggingTools.PrintMessage("UI Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
+
+        }
+
+
+       
+       
+    }
+
+
+    private void OnDisable()
+    {
+        if (TransactionEventChannel != null)
+        {
+            TransactionEventChannel.onWin -= ClearLevel;
+        }
+
+        if (uIChannel != null)
+        {
+            uIChannel.onStartGame -= StartLevel;
+            uIChannel.onNextLevel -= PrepairNextLevel;
+            uIChannel.onBackToHome -= QuitLevel;
+
+
+        }
+    }
 
     private void Awake()
     {
@@ -45,11 +98,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
 
-        GenerateParkingSpots();
-
-        SpawnContainers();
-
-        DoShuffle();
+        
     }
 
     // Update is called once per frame
@@ -58,8 +107,12 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    public void RestartLevel()
+
+    public void StartLevel()
     {
+       
+        uIChannel.OnUpdateLevelText(levelManagerData.GetCurrentLevel());
+
         GenerateParkingSpots();
 
         SpawnContainers();
@@ -68,12 +121,33 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    private void CheckPickableItems()
+
+    public void ClearLevel() 
     {
+        ClearLevelAfterDelay();
+    }
+    private IEnumerator ClearLevelAfterDelay()
+    {
+        DebuggingTools.PrintMessage("green", "CLEAR LEVEL CALLED ", this);
+        yield return new WaitForSeconds(clearlevelDelay);
+        ClearContainers();
+        ClearParkngSpots();
+       //PrepairNextLevel();
     }
 
-    private void CheckCanDropPickedItems()
+
+    private void PrepairNextLevel()
     {
+        levelManagerData.IncrementCurrentLevel();
+        //Level complete popup
+        //after click next load level or back to home
+        StartLevel();
+    }
+
+    private void QuitLevel()
+    {
+        ClearContainers();
+        ClearParkngSpots();
     }
 
     public void GenerateParkingSpots()
@@ -93,11 +167,11 @@ public class LevelManager : MonoBehaviour
 
                 x += levelManagerData.spaceBetweenColumns;
 
-                if (cells.Count < levelManagerData.totalSpawnPoints)
+                if (cells.Count < levelManagerData.GetCurrentLevelData().GetTotalVehicalsToSpawn())
                 {
 
 
-                    cells.Add(new Vector3(x, levelManagerData.SpawnHeight, startPos.transform.position.z - z));
+                    cells.Add(new Vector3(x, levelManagerData.spawnHeight, startPos.transform.position.z - z));
                 }
 
 
@@ -162,11 +236,12 @@ public class LevelManager : MonoBehaviour
         }
         foreach (var item in containers)
         {
-            Destroy(item);
+            Destroy(item.gameObject);
 
         }
         containers.Clear();
     }
+   
 
 
     private void DoShuffle()
@@ -184,38 +259,10 @@ public class LevelManager : MonoBehaviour
         List<int> baseArr = new List<int>();
 
 
-        int emptyContainers = 0;
-        if (levelManagerData.useDificultyForEmptyContainers)
-        {
-            switch (DifficultyLevel)
-            {
-                case 1:
-                    emptyContainers = 1;
-                    break;
-                case 2:
-                    emptyContainers = 1;
-                    break;
-                case 3:
-                    emptyContainers = 2;
-                    break;
-                case 4:
-                    emptyContainers = 2;
-                    break;
-                case 5:
-                    emptyContainers = 3;
-                    break;
-                default:
-                    emptyContainers = 2;
-                    break;
-            }
-        }
-        else
-        {
-            emptyContainers=levelManagerData.emptyContainers;
-        }
+        int emptyContainers = levelManagerData.GetCurrentLevelData().GetTotalEmptyVehicals();
         
         int typesToSpawn = 0;
-        int availableSpots = levelManagerData.totalSpawnPoints - emptyContainers;
+        int availableSpots = levelManagerData.GetCurrentLevelData().GetTotalVehicalsToSpawn()- emptyContainers;
         for (int i = 0; i < availableSpots; i++, typesToSpawn++) // generate itemId in array // unshuffed
         {
             if (typesToSpawn > itemData.GetitemTypesCount())
@@ -238,8 +285,8 @@ public class LevelManager : MonoBehaviour
             DebuggingTools.PrintList("=== Before shuffle===", baseArr);
         }
 
-        List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(DifficultyLevel, baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
-        levelManagerData.totalTypesInGame=setsOfItmsPerContainer.Count;
+        List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(levelManagerData.GetCurrentLevelData().GetDifficultyLevel(), baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
+        levelManagerData.SetTotalTypesInGame(setsOfItmsPerContainer.Count);
         if (debugMode.isDebugMode)
         {
 
@@ -300,112 +347,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    //private List<List<int>> SwapItemsFromArraysV4(List<int> arr, int requiredNoOfPairs, int splitAmount) //swap V4
-    //{
-    //    List<int> temp = new List<int>();
-
-
-    //    foreach (var item in arr)
-    //    {
-
-    //        temp.Add(item);
-
-    //    }
-
-    //    int pairs = 0;
-
-
-
-
-
-    //    DebuggingTools.PrintList("temp", temp);
-
-    //    for (int k = 0; k < temp.Count; k++)// sort pairs in temp
-    //    {
-    //        if (k + 2 < temp.Count)
-    //        {
-    //            if (temp[k] == temp[k + 1] && temp[k] != temp[k + 2])
-    //            {
-    //                k += 2;
-    //                pairs++;
-    //                continue;
-    //            }
-    //        }
-
-
-
-
-
-    //        for (int j = 0; j < temp.Count; j++)
-    //        {
-
-
-    //            if (k + 1 < temp.Count)
-    //            {
-
-    //                if (temp[k] == temp[j] && j != k)
-    //                {
-
-
-
-    //                    if (pairs == requiredNoOfPairs)
-    //                    {
-
-
-    //                        if (debugMode.isDebugMode)
-    //                            DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
-
-    //                        return splitPairs(temp, splitAmount);
-
-
-
-    //                    }
-
-
-    //                    if (k + 3 < temp.Count && k - 1 >= 0)
-    //                    {
-    //                        if (temp[k] == temp[k + 1] && temp[k] == temp[k + 2] && temp[k] == temp[k + 3])
-    //                        {
-    //                            int o = temp[k + 1];
-    //                            int randomIndex = k - 1;
-
-
-    //                            temp[k + 1] = temp[randomIndex];
-    //                            temp[randomIndex] = o;
-    //                        }
-    //                        else
-    //                        {
-    //                            int t = temp[k + 1];
-    //                            temp[k + 1] = temp[j];
-    //                            temp[j] = t;
-    //                        }
-    //                    }
-
-
-
-
-    //                    pairs++;
-    //                }
-
-    //            }
-
-
-    //        }
-
-
-    //    }
-
-    //    arr.Clear();
-
-
-
-    //    if (debugMode.isDebugMode)
-    //        DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
-
-
-
-    //    return splitPairs(temp, splitAmount);
-    //}
+    
 
 
 

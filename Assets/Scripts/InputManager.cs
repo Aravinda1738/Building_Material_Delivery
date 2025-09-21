@@ -31,8 +31,7 @@ public class InputManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         RaycastHit hit;
 
-      
-          
+
             if (Physics.Raycast(ray, out hit))
             {
                 Container container = hit.collider.GetComponent<Container>();

@@ -16,9 +16,12 @@ public class Container : MonoBehaviour
     [SerializeField]
     private GameObject sp;
 
+    [SerializeField]
+    private GameObject turnOn;
 
     private int containerId;
-
+    [SerializeField]
+    private SO_TransactionEventChannel TransactionEventChannel;
 
     // private int matchingCount = 0;
     private float moveSpeed = 0.005f;
@@ -40,12 +43,29 @@ public class Container : MonoBehaviour
 
 
 
+    private void OnEnable()
+    {
+        if (TransactionEventChannel != null)
+        {
+            TransactionEventChannel.onWin += MoveOut;
+        }
+    }
+
+
+    private void OnDisable()
+    {
+        if (TransactionEventChannel != null)
+        {
+            TransactionEventChannel.onWin -= MoveOut;
+        }
+    }
+
     //List<GameObject> recevedItems = new List<GameObject>();
     private void Start()
     {
         gameObject.name = $"Truck Number {containerId}";
         moveToPos = new Vector3(transform.position.x, transform.position.y, transform.position.z - 500);
-
+        turnOn.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -121,24 +141,35 @@ public class Container : MonoBehaviour
 
 
         //winCheck
-        int complete=0;
-        for (int i=1; i <loadingSpots.Count-1 ; i++)
+
+
+        if(noOfOccupiedSpots== loadingSpots.Count)
         {
-            if (loadingSpots[i].isOccupied)
+            int complete = 0;
+            for (int i = 1; i < loadingSpots.Count ; i++)
             {
+
                 if (loadingSpots[0].occupent.GetComponent<DeleveryItem>().GetItemTypeId() == loadingSpots[i].occupent.GetComponent<DeleveryItem>().GetItemTypeId())
                 {
                     complete++;
-                        Debug.LogError("loadingSpots.Count  " + loadingSpots.Count+ "complete  "+ complete );
-                    if (complete == loadingSpots.Count)
+                    
+                    if (complete == loadingSpots.Count-1)
                     {
-                        TransactionManager.Instance.AddCompletedContainerId(containerId);
-                        Debug.LogError("wadwadwd"+ containerId);
+                        DebuggingTools.PrintMessage("green", "Complete", this);
+
+                        TransactionManager.Instance.AddCompletedContainerId(containerId); // is end 
+                           turnOn.SetActive(true);
+                        
+
                     }
                 }
+
+
             }
-            
         }
+
+
+       
 
 
         
@@ -187,6 +218,7 @@ public class Container : MonoBehaviour
     }
     public void MoveOut()
     {
+        turnOn.SetActive(true);
         isMovingOut = true;
 
     }

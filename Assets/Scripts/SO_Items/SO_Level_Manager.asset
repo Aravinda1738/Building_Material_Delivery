@@ -14,10 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SO_Level_Manager
   rows: 3
   columns: 3
-  totalSpawnPoints: 5
   spaceBetweenColumns: 2
   spaceBetweenRows: 4.5
   rowOffsetFromSP: -6
   columnOffsetFromSP: 0.5
-  SpawnHeight: 1.195
+  spawnHeight: 1.195
   Vehical: {fileID: 1776182535699798825, guid: 3f18167d4b23b624b859bf598a07613b, type: 3}
+  fallBackLevel: 3
+  currentLevel: 1
+  totalTypesInGame: 0
+  levels:
+  - {fileID: 11400000, guid: 996ad12ba7f24a94e9654730c64675f8, type: 2}
+  - {fileID: 11400000, guid: 2d77cd751c112f1439de326cfbe522fe, type: 2}
+  - {fileID: 11400000, guid: c1212e319ced28646a665e9b129b8049, type: 2}
+  - {fileID: 11400000, guid: 97f374e5cdf2d9748a0c90862a722eb9, type: 2}
+  - {fileID: 11400000, guid: 6fa3e5ca6cfa4464a8650dfcc634c3de, type: 2}

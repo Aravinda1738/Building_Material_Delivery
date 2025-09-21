@@ -20,7 +20,7 @@ public class LevelManagerEditor : Editor
 
         if (GUILayout.Button("Restart Level"))
         {
-            levelManager.RestartLevel();
+            levelManager.StartLevel();
         }
 
 
