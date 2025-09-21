@@ -12,11 +12,12 @@ Building_Material_Delivery/APK
 
 DEV
 
-1
-The designer can use the scriptable object "SO_Levelmanager" in scripts/SO_items/ to adjust the properties and layout adjustment of the level 
+1. The designer can use the SO_LevelManager (located in Scripts/SO_Items/) to configure level properties and adjust the overall layout.
 
-2
-designer can add new levels by creating a scriptable object by using  right click -> create -> SO_level
 
-after creating a SO_level object add it in the level list in SO_Levelmanager object 
+2. To add a new level, create a new SO_Level ScriptableObject by right-clicking in the Project window and selecting:
+Create → SO_Level
+
+Once created, add the new SO_Level object to the Level List inside the SO_LevelManager object.
+ 
 
