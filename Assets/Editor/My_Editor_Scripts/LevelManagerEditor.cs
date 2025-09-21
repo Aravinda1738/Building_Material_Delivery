@@ -8,23 +8,20 @@ public class LevelManagerEditor : Editor
     {
         DrawDefaultInspector();
         LevelManager levelManager = (LevelManager)target;
-        if (GUILayout.Button("Generate Parking Spots"))
-        {
-            levelManager.GenerateParkingSpots();
-        }
-
-        if (GUILayout.Button("Clear  Parking Spots"))
-        {
-            levelManager.ClearParkngSpots();
-        }
-
-        if (GUILayout.Button("Restart Level"))
+        if (GUILayout.Button("Generate Debug Spots"))
         {
             levelManager.StartLevel();
         }
 
 
+        if (GUILayout.Button("Generate Parking Spots"))
+        {
+            levelManager.GenerateParkingSpots();
+        }
 
-        
+
+
+
+
     }
 }

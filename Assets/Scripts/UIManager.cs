@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     private GameObject levelCompleteUi;
     [SerializeField]
     private GameObject levelFailedUi;
+    [SerializeField]
+    private GameObject addBtn;
 
     [SerializeField]
     private TextMeshProUGUI CurrentLevelText;
@@ -30,6 +32,7 @@ public class UIManager : MonoBehaviour
         if (TransactionEventChannel != null)
         {
             TransactionEventChannel.onWin += LevelComplete;
+            TransactionEventChannel.onGameOver += LevelFailed;
         }
         else
         {
@@ -38,7 +41,8 @@ public class UIManager : MonoBehaviour
         }
         if (uIChannel != null)
         {
-            uIChannel.onUpdateLevelText += UpdateLevelText;
+            uIChannel.onUpdateLevelText += UpdateLevelAndMovesText;
+            uIChannel.onUpdateMovesLeft += UpdateMovesText;
 
 
         }
@@ -56,22 +60,31 @@ public class UIManager : MonoBehaviour
         if (TransactionEventChannel != null)
         {
             TransactionEventChannel.onWin -= LevelComplete;
+            TransactionEventChannel.onGameOver -= LevelFailed;
         }
         if (uIChannel != null)
         {
-            uIChannel.onUpdateLevelText -= UpdateLevelText;
+            uIChannel.onUpdateLevelText -= UpdateLevelAndMovesText;
+            uIChannel.onUpdateMovesLeft -= UpdateMovesText;
 
 
         }
 
 
     }
+
+    private void Awake()
+    {
+        homeScreen.SetActive(true);
+    }
+
     public void StartGame()
     {
 
         uIChannel.OnStartGame();
         homeScreen.SetActive(false);
         inGameUi.SetActive(true);
+        addBtn.SetActive(true);
 
 
     }
@@ -80,13 +93,17 @@ public class UIManager : MonoBehaviour
     {
         inGameUi.SetActive(false);
         levelCompleteUi.SetActive(true);
+        addBtn.SetActive(true);
+
     }
 
     public void NextLevel()
     {
-        uIChannel.OnNextLevel();
+        uIChannel.OnNextLevel(true);
         levelCompleteUi.SetActive(false);
         inGameUi.SetActive(true);
+        addBtn.SetActive(true);
+
 
     }
 
@@ -97,18 +114,41 @@ public class UIManager : MonoBehaviour
         levelCompleteUi.SetActive(false);
         inGameUi.SetActive(false);
         homeScreen.SetActive(true);
+        addBtn.SetActive(true);
 
         uIChannel.OnBackToHomeAction();
 
     }
 
+    public void AddExtraContainer()
+    {
+        uIChannel.OnAddExtraContainer();
+        addBtn.SetActive(false);
+    }
 
+
+    public void Undo()
+    {
+        uIChannel.OnUnDo();
+    }
 
     public void LevelFailed()
     {
         inGameUi.SetActive(false);
         levelFailedUi.SetActive(true);
+
     }
+
+    public void RetryLevel()
+    {
+        uIChannel.OnNextLevel(false);
+
+        levelCompleteUi.SetActive(false);
+        inGameUi.SetActive(true);
+        addBtn.SetActive(true);
+        levelFailedUi.SetActive(false);
+    }
+ 
 
     public void Quit()
     {
@@ -117,8 +157,13 @@ public class UIManager : MonoBehaviour
 
 
 
-    public void UpdateLevelText(int level)
+    public void UpdateLevelAndMovesText(int level,int movesAvailable)
     {
         CurrentLevelText.text = $"{level}";
+        MovesLeft.text = $"{movesAvailable}";
+    }
+    public void UpdateMovesText(int movesAvailable)
+    {
+        MovesLeft.text = $"{movesAvailable}";
     }
 }

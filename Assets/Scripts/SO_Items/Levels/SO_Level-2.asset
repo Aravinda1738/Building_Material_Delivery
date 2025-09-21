@@ -12,3 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a62622c1d94344fa6dc7078ed96602, type: 3}
   m_Name: SO_Level-2
   m_EditorClassIdentifier: Assembly-CSharp::SO_Level
+  totalVehicalsToSpawn: 4
+  TotalMovesAvailable: 10
+  totalEmptyVehicals: 2
+  numberOfPairsInLevel: 3

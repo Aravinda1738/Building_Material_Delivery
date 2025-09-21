@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
+
 
 public class Container : MonoBehaviour
 {
@@ -98,7 +98,7 @@ public class Container : MonoBehaviour
             loadingSpots[i].isOccupied = true;
             loadingSpots[i].occupent = temp;
             // GameObject temp = Instantiate(debugMode.debugCube, item, sp.transform.rotation);
-            temp.name = $"Item_{i}-Of Type -> {temp.GetComponent<DeleveryItem>().GetItemTypeId()}";
+            temp.name = $"Item_{i}-Of Type -> {temp.GetComponent<DeleveryItem>().GetItemTypeId()} in Con {containerId}";
             // temp.transform.localScale = new Vector3(.5f, .5f, .5f);
             temp.transform.SetParent(sp.transform);
             //loadedItems.Push(temp.GetComponent<DeleveryItem>());
@@ -143,23 +143,23 @@ public class Container : MonoBehaviour
         //winCheck
 
 
-        if(noOfOccupiedSpots== loadingSpots.Count)
+        if (noOfOccupiedSpots == loadingSpots.Count)
         {
             int complete = 0;
-            for (int i = 1; i < loadingSpots.Count ; i++)
+            for (int i = 1; i < loadingSpots.Count; i++)
             {
 
                 if (loadingSpots[0].occupent.GetComponent<DeleveryItem>().GetItemTypeId() == loadingSpots[i].occupent.GetComponent<DeleveryItem>().GetItemTypeId())
                 {
                     complete++;
-                    
-                    if (complete == loadingSpots.Count-1)
+
+                    if (complete == loadingSpots.Count - 1)
                     {
                         DebuggingTools.PrintMessage("green", "Complete", this);
 
                         TransactionManager.Instance.AddCompletedContainerId(containerId); // is end 
-                           turnOn.SetActive(true);
-                        
+                        turnOn.SetActive(true);
+
 
                     }
                 }
@@ -169,10 +169,10 @@ public class Container : MonoBehaviour
         }
 
 
-       
 
 
-        
+
+
 
     }
 
@@ -180,12 +180,17 @@ public class Container : MonoBehaviour
     public List<GameObject> Unload()
     {
 
+
+
         return FindValidItemsAndPick();
 
     }
     public List<GameObject> Unload(List<GameObject> unDoObjs)
     {
         List<GameObject> temp = new List<GameObject>();
+
+
+
 
 
         foreach (var obj in unDoObjs)
@@ -208,9 +213,14 @@ public class Container : MonoBehaviour
 
 
 
-
             }
         }
+        TransactionManager.Instance.RemoveCompletedContainer(containerId);
+
+
+
+        turnOn.SetActive(false);
+
 
 
         return temp;

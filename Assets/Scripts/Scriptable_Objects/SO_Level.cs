@@ -6,16 +6,18 @@ public class SO_Level : ScriptableObject
     [Header("Game Data")]
     [SerializeField]
     private int totalVehicalsToSpawn = 5;
+    [SerializeField]
+    private int TotalMovesAvailable = 5;
 
 
-    [Tooltip("important point: must not excede totalSpawnPoints ")]
+    [Tooltip("important point: must not excede totalSpawnPoints always add totalEmptyVehicals+addable Container ")]
     [SerializeField]
     private int totalEmptyVehicals = 2;
 
 
 
     [SerializeField]
-    private int difficultyLevel = 3;
+    private int numberOfPairsInLevel = 3;
     [SerializeField]
   //  private bool useDificultyForEmptyContainers = true;
 
@@ -32,7 +34,14 @@ public class SO_Level : ScriptableObject
     public int GetTotalVehicalsToSpawn() { return totalVehicalsToSpawn; }
     public int GetTotalEmptyVehicals() { return totalEmptyVehicals; }
 
-    public int GetDifficultyLevel() { return difficultyLevel; }
+    public int GetNumberOfPairs() { return numberOfPairsInLevel; }
+
+    public int GetTotalMovesAvailable() { 
+     
+        return TotalMovesAvailable;
+    
+    }
+
 
   
 }

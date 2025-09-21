@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class TransactionManager : MonoBehaviour //Event invoker
@@ -17,28 +16,31 @@ public class TransactionManager : MonoBehaviour //Event invoker
     private SO_Level_Manager levelData;
 
     private bool isSenderAvailable = false;
-    private bool isLevelEnd    = false;
+    private bool isLevelEnd = false;
     private Container sender;
     private Stack<HistoryPoint> movesHistory = new Stack<HistoryPoint>(); //moves history for every bunch
 
     private List<GameObject> itemsToTransfer = new List<GameObject>();
     private List<int> completedContainerIds = new List<int>();
 
-
+    private bool isTransferSuccess = false;
+    private int totalMovesForThisLevel = 1;
 
     private void OnEnable()
     {
-        
+
         if (uIChannel != null)
         {
             uIChannel.onNextLevel += LevelRestart;
             uIChannel.onBackToHome += QuitLevel;
+            uIChannel.onUnDo += UnDoMove;
+            uIChannel.onUpdateLevelText += OnInitialUpdateLevelMoves;
 
 
         }
         else
         {
-            DebuggingTools.PrintMessage("UI Channel is empty",DebuggingTools.DebugMessageType.ERROR,this);
+            DebuggingTools.PrintMessage("UI Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
         }
 
     }
@@ -46,11 +48,13 @@ public class TransactionManager : MonoBehaviour //Event invoker
 
     private void OnDisable()
     {
-      
+
         if (uIChannel != null)
         {
             uIChannel.onNextLevel -= LevelRestart;
             uIChannel.onBackToHome -= QuitLevel;
+            uIChannel.onUnDo -= UnDoMove;
+            uIChannel.onUpdateLevelText -= OnInitialUpdateLevelMoves;
 
 
         }
@@ -94,24 +98,38 @@ public class TransactionManager : MonoBehaviour //Event invoker
     }
 
 
-    public void AddCompletedContainerId(int id) { 
-      
-        completedContainerIds.Add(id);
-        
+    public void AddCompletedContainerId(int id)
+    {
 
-        if (completedContainerIds.Count ==  levelData.GetTotalTypesInGame())
+        completedContainerIds.Add(id);
+
+
+        if (completedContainerIds.Count == levelData.GetTotalTypesInGame())
         {
-            
+
             isLevelEnd = true;
             QuitLevel();
             TransactionEventChannel.OnWinAction();
 
             DebuggingTools.PrintMessage("green", "You Win!!! ", this);
         }
-       
+
     }
 
-    private void LevelRestart()
+
+    public void RemoveCompletedContainer(int id)
+    {
+        completedContainerIds.Remove(id);
+    }
+
+    public void OnInitialUpdateLevelMoves(int level, int movesAvailable)
+    {
+        totalMovesForThisLevel = movesAvailable;
+    }
+
+
+
+    private void LevelRestart(bool isLevelComplete)//bool not used here
     {
         isLevelEnd = false;
 
@@ -128,7 +146,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public void StoreSendingItems(List<GameObject> sendingItems)
     {
 
-       // GetItemsToTransfer().Clear();
+        // GetItemsToTransfer().Clear();
         SetItemsToTransfer(sendingItems);
     }
 
@@ -145,14 +163,26 @@ public class TransactionManager : MonoBehaviour //Event invoker
     {
         GetSender().Load(GetItemsToTransfer());
         SetSenderIsAvailable(false);
+        isTransferSuccess = false;
     }
     public void SendItemsToRecever(Container recever)
     {
+        isTransferSuccess = true;
         recever.Load(GetItemsToTransfer());
         SetSenderIsAvailable(false);
+
+        uIChannel.OnUpdateMovesLeft(totalMovesForThisLevel);
+
+        //check if moveLeft is 0 GameOver
+        if (totalMovesForThisLevel <= 0)
+        {
+            QuitLevel();
+            TransactionEventChannel.OnGameOverAction();
+
+        }
     }
 
-    public void SetSenderAndReceveItems(Container sender,bool isSenderAvailable)
+    public void SetSenderAndReceveItems(Container sender, bool isSenderAvailable)
     {
         SetSender(sender);
         SetSenderIsAvailable(isSenderAvailable);
@@ -160,10 +190,25 @@ public class TransactionManager : MonoBehaviour //Event invoker
     }
     public void SetSenderAndReceveItems(Container sender, List<GameObject> undoObjs, bool isSenderAvailable)
     {
+
+
+
         SetSender(sender);
         SetSenderIsAvailable(isSenderAvailable);
         StoreSendingItems(GetSender().Unload(undoObjs));
     }
+
+    public void ReleseItemsInHand()
+    {
+        if (!isTransferSuccess)
+        {
+            ReturnItemsToSender();
+
+
+        }
+
+    }
+
 
     /// <summary>
     /// While regestering "newOwner" is the is the "recever" and "oldOwner" is the "sender". 
@@ -171,9 +216,12 @@ public class TransactionManager : MonoBehaviour //Event invoker
     public void RegisterMove(List<GameObject> transferedItems, Container newOwner, Container oldOwner) //history
     {
         List<GameObject> temp = new List<GameObject>();
-       transferedItems.ForEach(item => temp.Add(item));
-        movesHistory.Push(new HistoryPoint(transferedItems, newOwner,oldOwner));
-        DebuggingTools.PrintMessage("blue", $" RegisterMove recever{movesHistory.Peek().GetRecever().name}  sender{movesHistory.Peek().GetSender().name} count {movesHistory.Peek().GetTransferedItems().Count}" , this);
+        transferedItems.ForEach(item => temp.Add(item));
+        movesHistory.Push(new HistoryPoint(transferedItems, newOwner, oldOwner));
+        totalMovesForThisLevel--;
+        uIChannel.OnUpdateMovesLeft(totalMovesForThisLevel);
+        DebuggingTools.PrintMessage("blue", $" RegisterMove recever{movesHistory.Peek().GetRecever().name}  sender{movesHistory.Peek().GetSender().name} count {movesHistory.Peek().GetTransferedItems().Count}", this);
+
     }
 
 
@@ -182,15 +230,28 @@ public class TransactionManager : MonoBehaviour //Event invoker
     /// </summary>
     public void UnDoMove() //history
     {
-        DebuggingTools.PrintMessage("blue", $"UNDO MOVE", this);
-        HistoryPoint group = movesHistory.Peek();
+        if (movesHistory.Count > 0)
+        {
+            DebuggingTools.PrintMessage("blue", $"UNDO MOVE", this);
+            HistoryPoint group = movesHistory.Peek();
 
-        SetSenderAndReceveItems(group.GetRecever(),group.GetTransferedItems(),false);//Sender
+            ReleseItemsInHand();
 
-        SendItemsToRecever(group.GetSender());//Recever 
-       // GetItemsToTransfer().Clear();
-        
-        movesHistory.Pop();
+            SetSenderAndReceveItems(group.GetRecever(), group.GetTransferedItems(), false);//Sender
+
+            SendItemsToRecever(group.GetSender());//Recever 
+                                                  // GetItemsToTransfer().Clear();
+            totalMovesForThisLevel++;
+            uIChannel.OnUpdateMovesLeft(totalMovesForThisLevel);
+
+            movesHistory.Pop();
+        }
+        else
+        {
+            DebuggingTools.PrintMessage("blue", $"No more moves left", this);
+
+        }
+
     }
 
 
@@ -198,8 +259,12 @@ public class TransactionManager : MonoBehaviour //Event invoker
     {
         bool result = false;
 
+
+
+
         //do nothing
-        if (completedContainerIds.Contains(recever.GetContainerId())||isLevelEnd) {
+        if (completedContainerIds.Contains(recever.GetContainerId()) || isLevelEnd)
+        {
             return false;
         }
 
@@ -223,10 +288,10 @@ public class TransactionManager : MonoBehaviour //Event invoker
                 {
                     //  Just Drop
 
-                    RegisterMove(GetItemsToTransfer(),recever, GetSender());
+                    RegisterMove(GetItemsToTransfer(), recever, GetSender());
 
                     SendItemsToRecever(recever);
-                   // GetItemsToTransfer().Clear();
+                    // GetItemsToTransfer().Clear();
                     result = true;
 
                 }
@@ -237,7 +302,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
                     RegisterMove(GetItemsToTransfer(), recever, GetSender());
 
                     SendItemsToRecever(recever);
-                   // GetItemsToTransfer().Clear();
+                    // GetItemsToTransfer().Clear();
                     result = true;
                 }
                 else if (recever.GetNoOfFreeSpots() < GetItemsToTransferCount() ||
@@ -247,7 +312,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
                     ReturnItemsToSender();
                     //GetItemsToTransfer().Clear();
 
-                    SetSenderAndReceveItems(recever,true);
+                    SetSenderAndReceveItems(recever, true);
                     result = true;
 
                 }
@@ -261,7 +326,8 @@ public class TransactionManager : MonoBehaviour //Event invoker
         {
 
 
-            SetSenderAndReceveItems(recever,true);
+            SetSenderAndReceveItems(recever, true);
+            isTransferSuccess = false;
             result = true;
         }
 

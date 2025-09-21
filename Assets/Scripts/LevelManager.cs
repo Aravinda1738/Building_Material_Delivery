@@ -19,7 +19,7 @@ public class LevelManager : MonoBehaviour
     private SO_TransactionEventChannel TransactionEventChannel;
     [SerializeField]
     private SO_UIChannel uIChannel;
-    
+
     [SerializeField]
     private float clearlevelDelay = 5;
 
@@ -28,7 +28,7 @@ public class LevelManager : MonoBehaviour
     private List<Container> containers = new List<Container>();
 
 
-     //Debug Variables
+    //Debug Variables
     [Header("Debug")]
     [SerializeField]
     private SO_DebugMode debugMode;
@@ -38,13 +38,14 @@ public class LevelManager : MonoBehaviour
 
     private List<GameObject> debugObjs = new List<GameObject>();
 
-
+    private GameObject ExtraContainer;
 
     private void OnEnable()
     {
-        if (TransactionEventChannel!=null)
+        if (TransactionEventChannel != null)
         {
             TransactionEventChannel.onWin += ClearLevel;
+            TransactionEventChannel.onGameOver += QuitLevel;
         }
         else
         {
@@ -52,11 +53,12 @@ public class LevelManager : MonoBehaviour
 
         }
 
-        if (uIChannel!=null)
+        if (uIChannel != null)
         {
             uIChannel.onStartGame += StartLevel;
-            uIChannel.onNextLevel += PrepairNextLevel;
+            uIChannel.onNextLevel += PrepairLevel;
             uIChannel.onBackToHome += QuitLevel;
+            uIChannel.onAddExtraContainer += AddExtraContainer;
         }
         else
         {
@@ -65,8 +67,8 @@ public class LevelManager : MonoBehaviour
         }
 
 
-       
-       
+
+
     }
 
 
@@ -75,13 +77,16 @@ public class LevelManager : MonoBehaviour
         if (TransactionEventChannel != null)
         {
             TransactionEventChannel.onWin -= ClearLevel;
+            TransactionEventChannel.onGameOver -= QuitLevel;
         }
 
         if (uIChannel != null)
         {
             uIChannel.onStartGame -= StartLevel;
-            uIChannel.onNextLevel -= PrepairNextLevel;
+            uIChannel.onNextLevel -= PrepairLevel;
             uIChannel.onBackToHome -= QuitLevel;
+            uIChannel.onAddExtraContainer -= AddExtraContainer;
+
 
 
         }
@@ -98,7 +103,7 @@ public class LevelManager : MonoBehaviour
     void Start()
     {
 
-        
+
     }
 
     // Update is called once per frame
@@ -110,8 +115,8 @@ public class LevelManager : MonoBehaviour
 
     public void StartLevel()
     {
-       
-        uIChannel.OnUpdateLevelText(levelManagerData.GetCurrentLevel());
+
+        uIChannel.OnUpdateLevelText(levelManagerData.GetCurrentLevel(),levelManagerData.GetCurrentLevelData().GetTotalMovesAvailable());
 
         GenerateParkingSpots();
 
@@ -122,7 +127,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    public void ClearLevel() 
+    public void ClearLevel()
     {
         ClearLevelAfterDelay();
     }
@@ -132,13 +137,17 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(clearlevelDelay);
         ClearContainers();
         ClearParkngSpots();
-       //PrepairNextLevel();
+        //PrepairNextLevel();
     }
 
 
-    private void PrepairNextLevel()
+    private void PrepairLevel(bool isLevelComplete)
     {
-        levelManagerData.IncrementCurrentLevel();
+        if (isLevelComplete)
+        {
+         levelManagerData.IncrementCurrentLevel();
+
+        }
         //Level complete popup
         //after click next load level or back to home
         StartLevel();
@@ -149,6 +158,12 @@ public class LevelManager : MonoBehaviour
         ClearContainers();
         ClearParkngSpots();
     }
+
+    private void AddExtraContainer()
+    {
+        ExtraContainer.SetActive(true);
+    }
+
 
     public void GenerateParkingSpots()
     {
@@ -200,7 +215,7 @@ public class LevelManager : MonoBehaviour
         {
             DebuggingTools.clearDebugObjs(debugObjs);
         }
-       
+
         cells.Clear();
     }
 
@@ -208,7 +223,7 @@ public class LevelManager : MonoBehaviour
     private void SpawnContainers()
     {
         ClearContainers();
-        int i=0;
+        int i = 0;
         foreach (Vector3 pos in cells)
         {
             GameObject containerObj = Instantiate(levelManagerData.Vehical, pos, levelManagerData.Vehical.transform.rotation);
@@ -216,7 +231,13 @@ public class LevelManager : MonoBehaviour
             if (container != null)
             {
                 container.SetId(i);
+                if ((cells.Count-1) == i)
+                {
+                    ExtraContainer=container.gameObject;
+                     container.gameObject.SetActive(false);
+                }
                 containers.Add(container);
+
                 i++;
             }
             else
@@ -241,8 +262,8 @@ public class LevelManager : MonoBehaviour
         }
         containers.Clear();
     }
-   
 
+    
 
     private void DoShuffle()
     {
@@ -260,9 +281,9 @@ public class LevelManager : MonoBehaviour
 
 
         int emptyContainers = levelManagerData.GetCurrentLevelData().GetTotalEmptyVehicals();
-        
+
         int typesToSpawn = 0;
-        int availableSpots = levelManagerData.GetCurrentLevelData().GetTotalVehicalsToSpawn()- emptyContainers;
+        int availableSpots = levelManagerData.GetCurrentLevelData().GetTotalVehicalsToSpawn() - emptyContainers;
         for (int i = 0; i < availableSpots; i++, typesToSpawn++) // generate itemId in array // unshuffed
         {
             if (typesToSpawn > itemData.GetitemTypesCount())
@@ -285,7 +306,7 @@ public class LevelManager : MonoBehaviour
             DebuggingTools.PrintList("=== Before shuffle===", baseArr);
         }
 
-        List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(levelManagerData.GetCurrentLevelData().GetDifficultyLevel(), baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
+        List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(levelManagerData.GetCurrentLevelData().GetNumberOfPairs(), baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
         levelManagerData.SetTotalTypesInGame(setsOfItmsPerContainer.Count);
         if (debugMode.isDebugMode)
         {
@@ -296,13 +317,13 @@ public class LevelManager : MonoBehaviour
 
         for (int i = 0; i < cells.Count; i++)
         {
-            if (i>= cells.Count - emptyContainers)
+            if (i >= cells.Count - emptyContainers)
             {
                 containers[i].GenerateLoadingSpots();
             }
             else
             {
-              containers[i].InitialLoad(setsOfItmsPerContainer[i]);
+                containers[i].InitialLoad(setsOfItmsPerContainer[i]);
 
             }
 
@@ -347,7 +368,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-    
+
 
 
 
@@ -518,10 +539,11 @@ public class LevelManager : MonoBehaviour
     }
 
 
+    
 
 
 
-
-
+    
+   
 
 }

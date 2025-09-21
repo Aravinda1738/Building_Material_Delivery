@@ -3894,7 +3894,7 @@ MonoBehaviour:
   uIChannel: {fileID: 11400000, guid: f1ae6e5a21351004fb737db0291b15f0, type: 2}
   clearlevelDelay: 5
   debugMode: {fileID: 11400000, guid: 5c3dd08f8c9adf44591b49f4b83b2567, type: 2}
-  canSpawnDebugobj: 1
+  canSpawnDebugobj: 0
 --- !u!4 &1792593352
 Transform:
   m_ObjectHideFlags: 0
@@ -4384,9 +4384,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Restart
-
-'
+  m_text: Next Level
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
