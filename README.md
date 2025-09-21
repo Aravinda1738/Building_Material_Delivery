@@ -11,6 +11,25 @@ APK location
 Building_Material_Delivery/APK
 
 ----------------------------------------------------
+🕹️ How to Play
+
+
+Goal: Organize all items so that each container holds only one type of item.
+
+Add a Container: Tap the ➕ button to place a new container.
+
+Undo a Move: Use the ↩️ button to undo your last action.
+
+Stacking Rules:
+
+You can only stack items of the same type of item.
+
+Blocks can also be placed in an empty container.
+
+
+
+
+----------------------------------------------------
 
 DEV
 
