@@ -1,6 +1,7 @@
 # Site_Supply 
 
-Game Description
+# Game Description
+
 This puzzle game challenges players to sort and deliver construction materials by carefully transferring them between different vehicles. With only a limited number of moves, players must think strategically to organize the materials correctly and complete each delivery. The game combines logic, planning, and problem-solving to test your ability to manage resources efficiently.
 
 ----------------------------------------------------
@@ -11,7 +12,7 @@ APK location
 Building_Material_Delivery/APK
 
 ----------------------------------------------------
-🕹️ How to Play
+# 🕹️ How to Play
 
 
 Goal: Organize all items so that each container holds only one type of item.
@@ -32,7 +33,7 @@ https://drive.google.com/file/d/1Gt1QUmSDYiHdcXTuHpsi9ae8HFa25R1z/view?usp=drive
 
 ----------------------------------------------------
 
-DEV
+# DEV
 
 Unity version 6.2
 
