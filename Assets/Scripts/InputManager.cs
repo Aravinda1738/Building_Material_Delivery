@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InputManager : MonoBehaviour
 {
@@ -24,10 +25,17 @@ public class InputManager : MonoBehaviour
         }
     }
 
+   
 
 
     private void OnTap(Vector2 touchPosition)
     {
+
+        if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+        {
+            return;
+        }
+
         Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         RaycastHit hit;
 

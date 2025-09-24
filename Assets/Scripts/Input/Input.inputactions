@@ -29,7 +29,7 @@
                 {
                     "name": "",
                     "id": "5b0483ea-97ed-4d02-8ee3-0c48fb617b76",
-                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "path": "<Touchscreen>/touch0/tap",
                     "interactions": "Tap(duration=0.4)",
                     "processors": "",
                     "groups": "",
@@ -40,7 +40,7 @@
                 {
                     "name": "",
                     "id": "e5c5dd2e-49ab-4c26-ab81-ddea6bc3dd72",
-                    "path": "<Touchscreen>/primaryTouch/startPosition",
+                    "path": "<Touchscreen>/touch0/position",
                     "interactions": "Tap(duration=0.4)",
                     "processors": "",
                     "groups": "",
