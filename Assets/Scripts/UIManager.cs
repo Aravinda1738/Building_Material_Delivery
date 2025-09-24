@@ -14,6 +14,8 @@ public class UIManager : MonoBehaviour
     private GameObject levelFailedUi;
     [SerializeField]
     private GameObject addBtn;
+    [SerializeField]
+    private GameObject howToPlayUi;
 
     [SerializeField]
     private TextMeshProUGUI CurrentLevelText;
@@ -83,11 +85,9 @@ public class UIManager : MonoBehaviour
     public void StartGame()
     {
         audioChannel.OnUiClick();
-        uIChannel.OnStartGame();
         homeScreen.SetActive(false);
-        inGameUi.SetActive(true);
-        addBtn.SetActive(true);
-    
+        howToPlayUi.SetActive(true);
+        
 
     }
 
@@ -158,6 +158,18 @@ public class UIManager : MonoBehaviour
         levelFailedUi.SetActive(false);
     }
  
+
+
+    public void CloaseHowToPlay()
+    {
+        audioChannel.OnUiClick(); 
+        howToPlayUi.SetActive(false);
+        uIChannel.OnStartGame();
+        inGameUi.SetActive(true);
+        addBtn.SetActive(true);
+
+    }
+
 
     public void Quit()
     {
