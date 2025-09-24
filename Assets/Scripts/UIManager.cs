@@ -23,6 +23,8 @@ public class UIManager : MonoBehaviour
 
     [Header("Game Data")]
     [SerializeField]
+    private SO_AudioChannel audioChannel;
+    [SerializeField]
     private SO_UIChannel uIChannel;
     [SerializeField]
     private SO_TransactionEventChannel TransactionEventChannel;
@@ -80,17 +82,18 @@ public class UIManager : MonoBehaviour
 
     public void StartGame()
     {
-
+        audioChannel.OnUiClick();
         uIChannel.OnStartGame();
         homeScreen.SetActive(false);
         inGameUi.SetActive(true);
         addBtn.SetActive(true);
-
+    
 
     }
 
     public void LevelComplete()
     {
+        audioChannel.OnUiClick(); 
         inGameUi.SetActive(false);
         levelCompleteUi.SetActive(true);
         addBtn.SetActive(true);
@@ -99,6 +102,7 @@ public class UIManager : MonoBehaviour
 
     public void NextLevel()
     {
+        audioChannel.OnUiClick(); 
         uIChannel.OnNextLevel(true);
         levelCompleteUi.SetActive(false);
         inGameUi.SetActive(true);
@@ -111,6 +115,7 @@ public class UIManager : MonoBehaviour
 
     public void BackToHome()
     {
+        audioChannel.OnUiClick(); 
         levelCompleteUi.SetActive(false);
         inGameUi.SetActive(false);
         homeScreen.SetActive(true);
@@ -122,6 +127,7 @@ public class UIManager : MonoBehaviour
 
     public void AddExtraContainer()
     {
+        audioChannel.OnUiClick(); 
         uIChannel.OnAddExtraContainer();
         addBtn.SetActive(false);
     }
@@ -129,11 +135,13 @@ public class UIManager : MonoBehaviour
 
     public void Undo()
     {
+        audioChannel.OnUiClick(); 
         uIChannel.OnUnDo();
     }
 
     public void LevelFailed()
     {
+        audioChannel.OnUiClick(); 
         inGameUi.SetActive(false);
         levelFailedUi.SetActive(true);
 
@@ -141,6 +149,7 @@ public class UIManager : MonoBehaviour
 
     public void RetryLevel()
     {
+        audioChannel.OnUiClick(); 
         uIChannel.OnNextLevel(false);
 
         levelCompleteUi.SetActive(false);
@@ -152,10 +161,12 @@ public class UIManager : MonoBehaviour
 
     public void Quit()
     {
+        audioChannel.OnUiClick(); 
         Application.Quit();
     }
 
 
+        
 
     public void UpdateLevelAndMovesText(int level,int movesAvailable)
     {

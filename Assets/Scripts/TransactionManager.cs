@@ -15,6 +15,10 @@ public class TransactionManager : MonoBehaviour //Event invoker
     [SerializeField]
     private SO_Level_Manager levelData;
 
+
+    [SerializeField]
+    private SO_AudioChannel audioChannel;
+
     private bool isSenderAvailable = false;
     private bool isLevelEnd = false;
     private Container sender;
@@ -42,6 +46,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         {
             DebuggingTools.PrintMessage("UI Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
         }
+
 
     }
 
@@ -232,8 +237,11 @@ public class TransactionManager : MonoBehaviour //Event invoker
     {
         if (movesHistory.Count > 0)
         {
+
             DebuggingTools.PrintMessage("blue", $"UNDO MOVE", this);
             HistoryPoint group = movesHistory.Peek();
+
+            audioChannel.OnPickDrop();
 
             ReleseItemsInHand();
 
@@ -270,6 +278,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
 
         if (IsSenderAvailable())
         {
+            audioChannel.OnPickDrop();
 
 
             if (recever.GetContainerId() == GetSender().GetContainerId()) //clicked the same container  *

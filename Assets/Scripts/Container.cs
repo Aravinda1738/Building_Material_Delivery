@@ -12,6 +12,13 @@ public class Container : MonoBehaviour
     private SO_Item itemData;
 
     [SerializeField]
+    private AudioClip audioStartEngine;
+    [SerializeField]
+    private AudioClip audioDrive;
+    [SerializeField] 
+    private AudioSource audioSource;
+
+    [SerializeField]
     private float gapBetweenItems = 2;
     [SerializeField]
     private GameObject sp;
@@ -159,7 +166,9 @@ public class Container : MonoBehaviour
 
                         TransactionManager.Instance.AddCompletedContainerId(containerId); // is end 
                         turnOn.SetActive(true);
-
+                        audioSource.resource = audioStartEngine;
+                        audioSource.volume = 0.9f;
+                        audioSource.Play();
 
                     }
                 }
@@ -228,6 +237,9 @@ public class Container : MonoBehaviour
     }
     public void MoveOut()
     {
+        audioSource.resource = audioDrive;
+        audioSource.volume = 0.5f;
+        audioSource.Play();
         turnOn.SetActive(true);
         isMovingOut = true;
 
