@@ -4,12 +4,12 @@
     "maps": [
         {
             "name": "Input",
-            "id": "dd6c1373-db0f-477a-a2b6-e3128329cc6b",
+            "id": "b15e9441-aa26-44a4-b134-4ca26defe7fb",
             "actions": [
                 {
                     "name": "Tap",
                     "type": "Button",
-                    "id": "02cac78e-a999-4eda-a929-7b5dd1bea0fc",
+                    "id": "70805a30-3e38-4b52-a567-cc6bd5f56866",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -18,7 +18,7 @@
                 {
                     "name": "TapPos",
                     "type": "Value",
-                    "id": "62929051-b03e-41ee-8491-ac0b5c130b6f",
+                    "id": "3d966d10-1fa6-4fc9-a124-f43487fe8708",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -28,9 +28,9 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "8d338a54-2e8d-49e9-bc2e-512dbfdd0947",
-                    "path": "<Touchscreen>/Press",
-                    "interactions": "Tap",
+                    "id": "aeb21378-8685-4967-8346-d726dd78b887",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "Press(behavior=1)",
                     "processors": "",
                     "groups": "",
                     "action": "Tap",
@@ -39,9 +39,9 @@
                 },
                 {
                     "name": "",
-                    "id": "c08670d0-5a49-4b23-845c-3e458c927bdc",
+                    "id": "9721235a-c2da-458c-b997-8b3a24d6543b",
                     "path": "<Touchscreen>/primaryTouch/position",
-                    "interactions": "Tap",
+                    "interactions": "Press(behavior=1)",
                     "processors": "",
                     "groups": "",
                     "action": "TapPos",

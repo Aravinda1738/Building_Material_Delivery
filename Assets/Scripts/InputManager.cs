@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
 public class InputManager : MonoBehaviour
 {
     [SerializeField]
@@ -8,7 +9,7 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private SO_DebugMode debugMode;
 
-   
+
 
     private void OnEnable()
     {
@@ -29,20 +30,26 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.touchCount > 0)
-        {
-            
-            Touch touch = Input.GetTouch(0);
+        //if (Input.touchCount > 0)
+        //{
 
-            if (touch.phase== TouchPhase.Ended)
-            {
-              OnTap(touch.position);
+        //    Touch touch = Input.GetTouch(0);
 
-            }
+        //    if (touch.phase== TouchPhase.Ended)
+        //    {
+        //      OnTap(touch.position);
+
+        //    }
 
 
-        }
+        //}
+
+
+        
+
+        
     }
+
 
 
     private void OnTap(Vector2 touchPosition)
@@ -74,7 +81,7 @@ public class InputManager : MonoBehaviour
                 if (debugMode.isDebugMode)
                 {
 
-                    DebuggingTools.PrintMessage($" Touched object: {hit.transform.name}", this);
+                    debugMode.PrintMessage($" Touched object: {hit.transform.name}", this);
                     Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 2f);
                 }
             }

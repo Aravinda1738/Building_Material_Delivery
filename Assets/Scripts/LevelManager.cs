@@ -47,11 +47,7 @@ public class LevelManager : MonoBehaviour
             TransactionEventChannel.onWin += ClearLevel;
             TransactionEventChannel.onGameOver += QuitLevel;
         }
-        else
-        {
-            DebuggingTools.PrintMessage("TransactionEvent Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
-
-        }
+       
 
         if (uIChannel != null)
         {
@@ -60,11 +56,7 @@ public class LevelManager : MonoBehaviour
             uIChannel.onBackToHome += QuitLevel;
             uIChannel.onAddExtraContainer += AddExtraContainer;
         }
-        else
-        {
-            DebuggingTools.PrintMessage("UI Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
-
-        }
+        
 
 
 
@@ -95,7 +87,7 @@ public class LevelManager : MonoBehaviour
     private void Awake()
     {
         if (debugMode.isDebugMode)
-            DebuggingTools.clearDebugObjs(debugObjs);
+            debugMode.clearDebugObjs(debugObjs);
 
     }
 
@@ -133,7 +125,7 @@ public class LevelManager : MonoBehaviour
     }
     private IEnumerator ClearLevelAfterDelay()
     {
-        DebuggingTools.PrintMessage("green", "CLEAR LEVEL CALLED ", this);
+        debugMode.PrintMessage("green", "CLEAR LEVEL CALLED ", this);
         yield return new WaitForSeconds(clearlevelDelay);
         ClearContainers();
         ClearParkngSpots();
@@ -196,25 +188,21 @@ public class LevelManager : MonoBehaviour
 
 
         }
-        if (debugMode.isDebugMode)
-        {
-
-
-            DebuggingTools.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
+       
+            debugMode.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
 
             if (canSpawnDebugobj)
             {
-                DebuggingTools.SpawnDebugObjs(debugMode.debugCube, cells, transform.rotation);
+                debugMode.SpawnDebugObjs(debugMode.debugCube, cells, transform.rotation);
             }
-        }
+        
     }
 
     public void ClearParkngSpots()
     {
-        if (debugMode.isDebugMode)
-        {
-            DebuggingTools.clearDebugObjs(debugObjs);
-        }
+        
+            debugMode.clearDebugObjs(debugObjs);
+        
 
         cells.Clear();
     }
@@ -242,7 +230,7 @@ public class LevelManager : MonoBehaviour
             }
             else
             {
-                DebuggingTools.PrintMessage("does not have a Container component attached.", DebuggingTools.DebugMessageType.ERROR, this);
+                debugMode.PrintMessage("does not have a Container component attached.", SO_DebugMode.DebugMessageType.ERROR, this);
 
 
             }
@@ -251,10 +239,9 @@ public class LevelManager : MonoBehaviour
 
     public void ClearContainers()
     {
-        if (debugMode.isDebugMode)
-        {
-            DebuggingTools.clearDebugObjs(debugObjs);
-        }
+       
+            debugMode.clearDebugObjs(debugObjs);
+        
         foreach (var item in containers)
         {
             Destroy(item.gameObject);
@@ -270,7 +257,7 @@ public class LevelManager : MonoBehaviour
         if (cells.Count == 0)
         {
 
-            DebuggingTools.PrintMessage("Parking Spots are not generated/Empty.", DebuggingTools.DebugMessageType.ERROR, this);
+            debugMode.PrintMessage("Parking Spots are not generated/Empty.", SO_DebugMode.DebugMessageType.ERROR, this);
             return;
 
         }
@@ -300,19 +287,15 @@ public class LevelManager : MonoBehaviour
 
         }
 
-        if (debugMode.isDebugMode)
-        {
-
-            DebuggingTools.PrintList("=== Before shuffle===", baseArr);
-        }
+      
+            debugMode.PrintList("=== Before shuffle===", baseArr);
+        
 
         List<List<int>> setsOfItmsPerContainer = CustomeShuffle2(levelManagerData.GetCurrentLevelData().GetNumberOfPairs(), baseArr, containerData.totalItemsCanHold, containerData.totalItemsCanHold); // custome shuffle algorathem
         levelManagerData.SetTotalTypesInGame(setsOfItmsPerContainer.Count);
-        if (debugMode.isDebugMode)
-        {
-
-            DebuggingTools.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
-        }
+        
+            debugMode.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
+        
 
 
         for (int i = 0; i < cells.Count; i++)
@@ -355,11 +338,9 @@ public class LevelManager : MonoBehaviour
         result = SwapItemsFromArraysV4(FisherYatesShuffle(arr), numberOfMatchingNeighbors, splitAmount);
 
 
-        if (debugMode.isDebugMode)
-        {
-            DebuggingTools.PrintListOfLists("===  shuffle v4 ===", result);
+         debugMode.PrintListOfLists("===  shuffle v4 ===", result);
 
-        }
+        
         return result;
 
 
@@ -384,7 +365,7 @@ public class LevelManager : MonoBehaviour
 
         int pairs = 0;
 
-        DebuggingTools.PrintList("temp", temp);
+        debugMode.PrintList("temp", temp);
 
         int lastPairIndex = -1; // Track the last index included in pairs
 
@@ -410,7 +391,7 @@ public class LevelManager : MonoBehaviour
                         if (pairs == requiredNoOfPairs)
                         {
                             if (debugMode.isDebugMode)
-                                DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
+                                debugMode.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
 
                             goto AfterPairs; // Break out to shuffle leftovers
                         }
@@ -473,8 +454,8 @@ public class LevelManager : MonoBehaviour
 
         arr.Clear();
 
-        if (debugMode.isDebugMode)
-            DebuggingTools.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
+        
+            debugMode.PrintMessage($"temp count = {temp.Count} Pairs = {pairs}", this);
 
         return splitPairs(temp, splitAmount);
     }
@@ -496,8 +477,8 @@ public class LevelManager : MonoBehaviour
 
             result.Add(temp.GetRange(i, count));
         }
-        if (debugMode.isDebugMode)
-            DebuggingTools.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
+        
+            debugMode.PrintMessage($"Total Parking Spots:  {cells.Count} ", this);
         return result;
     }
     private List<int> FisherYatesShuffle(List<int> list)
@@ -527,16 +508,7 @@ public class LevelManager : MonoBehaviour
             list[swapIndex] = temp;
         }
     }
-    private List<List<int>> SplitList(List<int> source, int splitAmount)
-    {
-        var result = new List<List<int>>();
-        for (int i = 0; i < source.Count; i += splitAmount)
-        {
-            int count = Mathf.Min(splitAmount, source.Count - i);
-            result.Add(source.GetRange(i, count));
-        }
-        return result;
-    }
+   
 
 
     

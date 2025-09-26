@@ -4439,6 +4439,7 @@ MonoBehaviour:
   uIChannel: {fileID: 11400000, guid: f1ae6e5a21351004fb737db0291b15f0, type: 2}
   levelData: {fileID: 11400000, guid: 0678e608f6524344fa30b953c78ce4a6, type: 2}
   audioChannel: {fileID: 11400000, guid: cdb1c2086ca8f5046a3a862b96646bf8, type: 2}
+  debugMode: {fileID: 11400000, guid: 5c3dd08f8c9adf44591b49f4b83b2567, type: 2}
 --- !u!1 &1566420898
 GameObject:
   m_ObjectHideFlags: 0
@@ -4939,6 +4940,7 @@ MonoBehaviour:
   MovesLeft: {fileID: 748743738}
   audioChannel: {fileID: 11400000, guid: cdb1c2086ca8f5046a3a862b96646bf8, type: 2}
   uIChannel: {fileID: 11400000, guid: f1ae6e5a21351004fb737db0291b15f0, type: 2}
+  debugMode: {fileID: 11400000, guid: 5c3dd08f8c9adf44591b49f4b83b2567, type: 2}
   TransactionEventChannel: {fileID: 11400000, guid: b72fac4551ee1064681df480f8cb8aa4, type: 2}
 --- !u!1 &1849699964
 GameObject:

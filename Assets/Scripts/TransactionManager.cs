@@ -15,7 +15,6 @@ public class TransactionManager : MonoBehaviour //Event invoker
     [SerializeField]
     private SO_Level_Manager levelData;
 
-
     [SerializeField]
     private SO_AudioChannel audioChannel;
 
@@ -30,6 +29,8 @@ public class TransactionManager : MonoBehaviour //Event invoker
     private bool isTransferSuccess = false;
     private int totalMovesForThisLevel = 1;
 
+    [SerializeField]
+    private SO_DebugMode debugMode;
     private void OnEnable()
     {
 
@@ -44,7 +45,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         }
         else
         {
-            DebuggingTools.PrintMessage("UI Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
+            debugMode.PrintMessage("UI Channel is empty", SO_DebugMode.DebugMessageType.ERROR, this);
         }
 
 
@@ -116,7 +117,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
             QuitLevel();
             TransactionEventChannel.OnWinAction();
 
-            DebuggingTools.PrintMessage("green", "You Win!!! ", this);
+            debugMode.PrintMessage("green", "You Win!!! ", this);
         }
 
     }
@@ -225,7 +226,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         movesHistory.Push(new HistoryPoint(transferedItems, newOwner, oldOwner));
         totalMovesForThisLevel--;
         uIChannel.OnUpdateMovesLeft(totalMovesForThisLevel);
-        DebuggingTools.PrintMessage("blue", $" RegisterMove recever{movesHistory.Peek().GetRecever().name}  sender{movesHistory.Peek().GetSender().name} count {movesHistory.Peek().GetTransferedItems().Count}", this);
+        debugMode.PrintMessage("blue", $" RegisterMove recever{movesHistory.Peek().GetRecever().name}  sender{movesHistory.Peek().GetSender().name} count {movesHistory.Peek().GetTransferedItems().Count}", this);
 
     }
 
@@ -238,7 +239,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         if (movesHistory.Count > 0)
         {
 
-            DebuggingTools.PrintMessage("blue", $"UNDO MOVE", this);
+            debugMode.PrintMessage("blue", $"UNDO MOVE", this);
             HistoryPoint group = movesHistory.Peek();
 
             audioChannel.OnPickDrop();
@@ -256,7 +257,7 @@ public class TransactionManager : MonoBehaviour //Event invoker
         }
         else
         {
-            DebuggingTools.PrintMessage("blue", $"No more moves left", this);
+            debugMode.PrintMessage("blue", $"No more moves left", this);
 
         }
 

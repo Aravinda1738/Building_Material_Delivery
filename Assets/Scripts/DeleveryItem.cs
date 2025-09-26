@@ -32,7 +32,7 @@ public class DeleveryItem : MonoBehaviour
 
 
         if (debugMode.isDebugMode)
-            DebuggingTools.PrintMessage($" Item Created with id:  {Id}", this);
+            debugMode.PrintMessage($" Item Created with id:  {Id}", this);
     }
 
 
@@ -43,7 +43,7 @@ public class DeleveryItem : MonoBehaviour
         if (Id > containerData.totalItemsCanHold)
         {
             Id = -1;
-            DebuggingTools.PrintMessage("ID must not be greater then containerData.totalItemsCanHold ", DebuggingTools.DebugMessageType.WARNING, this);
+            debugMode.PrintMessage("ID must not be greater then containerData.totalItemsCanHold ", SO_DebugMode.DebugMessageType.WARNING, this);
         }
     }
 

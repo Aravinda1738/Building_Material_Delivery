@@ -29,6 +29,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private SO_UIChannel uIChannel;
     [SerializeField]
+    private SO_DebugMode debugMode;
+    [SerializeField]
     private SO_TransactionEventChannel TransactionEventChannel;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void OnEnable()
@@ -40,7 +42,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            DebuggingTools.PrintMessage("TransactionEvent Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
+            debugMode.PrintMessage("TransactionEvent Channel is empty", SO_DebugMode.DebugMessageType.ERROR, this);
 
         }
         if (uIChannel != null)
@@ -52,7 +54,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            DebuggingTools.PrintMessage("UI Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
+            debugMode.PrintMessage("UI Channel is empty", SO_DebugMode.DebugMessageType.ERROR, this);
 
         }
 

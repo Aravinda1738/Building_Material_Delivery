@@ -8,6 +8,8 @@ public class SO_Level : ScriptableObject
     private int totalVehicalsToSpawn = 5;
     [SerializeField]
     private int TotalMovesAvailable = 5;
+    [SerializeField]
+    private SO_DebugMode debugMode;
 
 
     [Tooltip("important point: must not excede totalSpawnPoints always add totalEmptyVehicals+addable Container ")]
@@ -25,7 +27,7 @@ public class SO_Level : ScriptableObject
     {
         if (totalEmptyVehicals > totalVehicalsToSpawn)
         {
-            DebuggingTools.PrintMessage("important point: must not excede totalVehicalsToSpawn",DebuggingTools.DebugMessageType.WARNING, this);
+            debugMode.PrintMessage("important point: must not excede totalVehicalsToSpawn",SO_DebugMode.DebugMessageType.WARNING, this);
             totalEmptyVehicals = 2;
         }
     }

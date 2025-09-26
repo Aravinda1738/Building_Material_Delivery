@@ -88,8 +88,8 @@ public class Container : MonoBehaviour
 
     public void InitialLoad(List<int> ids)
     {
-        if (debugMode.isDebugMode)
-            DebuggingTools.PrintMessage(" Initial Load ", this);
+        
+            debugMode.PrintMessage(" Initial Load ", this);
 
         GenerateLoadingSpots();
 
@@ -98,7 +98,7 @@ public class Container : MonoBehaviour
 
             if (i > itemData.GetitemTypesCount())
             {
-                DebuggingTools.PrintMessage(" id > item type ", DebuggingTools.DebugMessageType.ERROR, this);
+                debugMode.PrintMessage(" id > item type ", SO_DebugMode.DebugMessageType.ERROR, this);
             }
 
             GameObject temp = Instantiate(itemData.GetItemType(ids[i]), loadingSpots[i].spot, itemData.GetItemType(ids[i]).transform.rotation);
@@ -131,7 +131,7 @@ public class Container : MonoBehaviour
                 emptySpotIndexes.Add(i);
             }
         }
-        DebuggingTools.PrintMessage($"Number of empty spots -> {emptySpotIndexes.Count} Loaded items -> {noOfOccupiedSpots}", this);
+        debugMode.PrintMessage($"Number of empty spots -> {emptySpotIndexes.Count} Loaded items -> {noOfOccupiedSpots}", this);
 
 
         for (int i = 0; i < itemsToLoad.Count; i++) //add to empty spots
@@ -142,7 +142,7 @@ public class Container : MonoBehaviour
             noOfOccupiedSpots++;
 
         }
-        DebuggingTools.PrintMessage("yellow", $"After update Loaded items -> {noOfOccupiedSpots}", this);
+        debugMode.PrintMessage("yellow", $"After update Loaded items -> {noOfOccupiedSpots}", this);
 
 
 
@@ -162,7 +162,7 @@ public class Container : MonoBehaviour
 
                     if (complete == loadingSpots.Count - 1)
                     {
-                        DebuggingTools.PrintMessage("green", "Complete", this);
+                        debugMode.PrintMessage("green", "Complete", this);
 
                         TransactionManager.Instance.AddCompletedContainerId(containerId); // is end 
                         turnOn.SetActive(true);
@@ -280,7 +280,7 @@ public class Container : MonoBehaviour
                 break;
             }
         }
-        DebuggingTools.PrintMessage("cyan", $"Picked Group -> {pickedGroup}", this);
+        debugMode.PrintMessage("cyan", $"Picked Group -> {pickedGroup}", this);
         return pickedGroup;
     }
 
@@ -294,11 +294,11 @@ public class Container : MonoBehaviour
 
         }
 
-        if (debugMode.isDebugMode & spawnDebugobj)
-        {
-            DebuggingTools.SpawnDebugObjs(debugMode.debugCube, loadingSpots, sp.transform.rotation, sp.transform);
+       
+        
+            debugMode.SpawnDebugObjs(debugMode.debugCube, loadingSpots, sp.transform.rotation, sp.transform);
 
-        }
+        
 
     }
 
@@ -388,15 +388,15 @@ public class LoadingSpots
     {
         if (newOccupent == null)
         {
-            DebuggingTools.PrintMessage("newOccupent is NULL in AddNewOccupent", DebuggingTools.DebugMessageType.ERROR, this);
+            Debug.LogError("newOccupent is NULL in AddNewOccupent");
             return;
         }
 
 
         if (newOccupent == null)
         {
+            Debug.LogError("newOccupent is NULL in AddNewOccupent");
 
-            DebuggingTools.PrintMessage("newOccupent is NULL in AddNewOccupent", DebuggingTools.DebugMessageType.ERROR, this);
             return;
         }
 

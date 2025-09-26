@@ -28,10 +28,7 @@ public class AudioManager : MonoBehaviour
 
 
         }
-        else
-        {
-            DebuggingTools.PrintMessage("audio Channel is empty", DebuggingTools.DebugMessageType.ERROR, this);
-        }
+        
 
 
     }
@@ -63,8 +60,5 @@ public class AudioManager : MonoBehaviour
         audioSource.resource = pickDrop;
         audioSource.Play();
     }
-    //public void PlayUIAudio()
-    //{
-    //    audioSource.Play();
-    //}
+    
 }
