@@ -25,16 +25,34 @@ public class InputManager : MonoBehaviour
         }
     }
 
-   
+
+
+    private void Update()
+    {
+        if (Input.touchCount > 0)
+        {
+            
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase== TouchPhase.Ended)
+            {
+              OnTap(touch.position);
+
+            }
+
+
+        }
+    }
 
 
     private void OnTap(Vector2 touchPosition)
     {
 
-        if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
-        {
-            return;
-        }
+        //if (EventSystem.current.IsPointerOverGameObject(UnityEngine.InputSystem.Touchscreen.current.primaryTouch.touchId.ReadValue()))
+        //{
+        //    return;
+        //}
+
 
         Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         RaycastHit hit;
