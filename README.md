@@ -35,7 +35,7 @@ https://drive.google.com/file/d/1Gt1QUmSDYiHdcXTuHpsi9ae8HFa25R1z/view?usp=drive
 
 # DEV
 
-Unity version 6.2
+Unity version 6.2(6000.2.3.f1)
 
 
 1. The designer can use the SO_LevelManager (located in Scripts/SO_Items/) to configure level properties and adjust the overall layout.
